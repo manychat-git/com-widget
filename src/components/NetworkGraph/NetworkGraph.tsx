@@ -9,16 +9,23 @@ import * as THREE from 'three';
 const NetworkGraph = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const graphRef = useRef<any>(null);
+  const tooltipRef = useRef<HTMLDivElement | null>(null);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
+    // Create tooltip element
+    const tooltip = document.createElement('div');
+    tooltip.className = 'tooltip';
+    document.body.appendChild(tooltip);
+    tooltipRef.current = tooltip;
+
     // Initialize the 3D force graph
     const Graph = new ForceGraph3D()(containerRef.current)
       .backgroundColor('rgba(0,0,0,0)')
       .graphData(sampleData)
-      .nodeLabel('title')
+      .nodeLabel(null) // Отключаем встроенный тултип
       .nodeColor((node: any) => {
         switch (node.type) {
           case 'article': return '#4A90E2';
@@ -35,29 +42,13 @@ const NetworkGraph = () => {
         const sprite = new THREE.Sprite(material);
         sprite.scale.set(16, 16, 1);
 
-        // Create container for sprite and text
+        // Create container for sprite
         const group = new THREE.Group();
         group.add(sprite);
 
-        // Add text label
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
-        if (context) {
-          context.font = '12px Arial';
-          context.fillStyle = 'white';
-          context.fillText(node.title, 0, 24);
-          const texture = new THREE.CanvasTexture(canvas);
-          const labelSprite = new THREE.Sprite(
-            new THREE.SpriteMaterial({ map: texture })
-          );
-          labelSprite.position.y = -10;
-          labelSprite.scale.set(30, 15, 1);
-          group.add(labelSprite);
-        }
-
         return group;
       })
-      .linkWidth(1)
+      .linkWidth(0.1)
       .linkOpacity(0.5)
       .onNodeClick((node: any) => {
         setSelectedNode(node);
@@ -69,6 +60,19 @@ const NetworkGraph = () => {
           node,
           3000
         );
+      })
+      .onNodeHover((node: any) => {
+        if (tooltipRef.current) {
+          if (node) {
+            const screenPos = Graph.graph2ScreenCoords(node.x, node.y, node.z);
+            tooltipRef.current.style.display = 'block';
+            tooltipRef.current.style.left = `${screenPos.x}px`;
+            tooltipRef.current.style.top = `${screenPos.y - 10}px`;
+            tooltipRef.current.textContent = node.title.toUpperCase();
+          } else {
+            tooltipRef.current.style.display = 'none';
+          }
+        }
       });
 
     // Configure renderer
@@ -96,6 +100,9 @@ const NetworkGraph = () => {
     // Cleanup
     return () => {
       window.removeEventListener('resize', handleResize);
+      if (tooltipRef.current) {
+        document.body.removeChild(tooltipRef.current);
+      }
       Graph._destructor();
     };
   }, []);
@@ -122,7 +129,7 @@ const NetworkGraph = () => {
 
   return (
     <div className="relative w-full h-screen">
-      <div ref={containerRef} className="w-full h-full [mix-blend-mode:multiply]" />
+      <div ref={containerRef} className="w-full h-full" />
       <InfoPanel
         selectedNode={selectedNode}
         onClose={() => setSelectedNode(null)}

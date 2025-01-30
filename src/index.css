@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Объявляем шрифт CoFo Sans Mono */
+@font-face {
+  font-family: 'CoFo Sans Mono';
+  src: url('/fonts/CoFoSansMono-Regular.otf') format('opentype'),
+       url('/fonts/CoFoSansMono-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100% 0;
@@ -98,4 +108,28 @@
   body {
     @apply bg-transparent text-foreground;
   }
+}
+
+/* Override default tooltip styles */
+.tooltip {
+  position: fixed;
+  background: #0057FF;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-family: 'CoFo Sans Mono', monospace;
+  font-size: 14px;
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+  z-index: 1000;
+  white-space: nowrap;
+}
+
+/* Remove unused styles */
+div.scene-tooltip {
+  display: none;
+}
+.graph-tooltip {
+  display: none;
 }
