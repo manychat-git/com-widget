@@ -122,7 +122,7 @@ const NetworkGraph = () => {
 
   return (
     <div className="relative w-full h-screen">
-      <div ref={containerRef} className="w-full h-full" />
+      <div ref={containerRef} className="w-full h-full [mix-blend-mode:multiply]" />
       <InfoPanel
         selectedNode={selectedNode}
         onClose={() => setSelectedNode(null)}
