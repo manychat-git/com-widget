@@ -15,8 +15,9 @@ const NetworkGraph = () => {
     if (!containerRef.current) return;
 
     // Initialize the 3D force graph
-    const Graph = new ForceGraph3D()(containerRef.current)
+    const Graph = ForceGraph3D()(containerRef.current)
       .graphData(sampleData)
+      .backgroundColor('rgba(0,0,0,0)')
       .nodeLabel('title')
       .nodeColor((node: any) => {
         switch (node.type) {
@@ -113,7 +114,7 @@ const NetworkGraph = () => {
   };
 
   return (
-    <div className="relative w-full h-screen bg-gray-900">
+    <div className="relative w-full h-screen">
       <div ref={containerRef} className="w-full h-full" />
       <InfoPanel
         selectedNode={selectedNode}
