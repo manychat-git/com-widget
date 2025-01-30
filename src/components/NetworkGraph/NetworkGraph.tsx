@@ -29,24 +29,73 @@ const NetworkGraph = () => {
       .nodeColor((node: any) => {
         switch (node.type) {
           case 'article': return '#4A90E2';
-          case 'author': return '#50C878';
-          case 'topic': return '#FF6B6B';
-          case 'meme': return '#FFB347';
+          case 'youtube_video': return '#FF6B6B';
+          case 'special_project': return '#50C878';
           default: return '#999';
         }
       })
       .nodeThreeObject((node: any) => {
-        // Create sprite material with node image
-        const imgTexture = new THREE.TextureLoader().load(node.imageUrl);
-        const material = new THREE.SpriteMaterial({ map: imgTexture });
+        // Create a canvas for preprocessing
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        
+        // Set canvas size for high quality
+        canvas.width = 1024;
+        canvas.height = Math.round(1024 * (9/16));
+        
+        // Calculate corner radius (3% of width)
+        const cornerRadiusPercent = 0.1; // 3% от ширины
+        const cornerRadius = Math.round(canvas.width * cornerRadiusPercent);
+        
+        // Create texture from canvas
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.minFilter = THREE.LinearMipmapLinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+        texture.anisotropy = 16;
+        texture.colorSpace = THREE.SRGBColorSpace;
+        texture.generateMipmaps = true;
+        
+        // Create material with the texture
+        const material = new THREE.SpriteMaterial({
+          map: texture,
+          transparent: true,
+          depthWrite: true,
+          sizeAttenuation: true
+        });
+        
+        // Create sprite with initial size
         const sprite = new THREE.Sprite(material);
-        sprite.scale.set(16, 16, 1);
-
-        // Create container for sprite
-        const group = new THREE.Group();
-        group.add(sprite);
-
-        return group;
+        const width = 24;
+        const height = width * (9/16);
+        sprite.scale.set(width, height, 1);
+        
+        // Load and process image
+        img.crossOrigin = "Anonymous";
+        img.onload = () => {
+          if (ctx) {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Enable high-quality smoothing
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            
+            // Draw rounded rectangle
+            ctx.beginPath();
+            ctx.roundRect(0, 0, canvas.width, canvas.height, cornerRadius);
+            ctx.clip();
+            
+            // Draw image
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            // Update texture
+            texture.needsUpdate = true;
+          }
+        };
+        img.src = node.imageUrl;
+        
+        return sprite;
       })
       .linkWidth(0.1)
       .linkOpacity(0.5)
