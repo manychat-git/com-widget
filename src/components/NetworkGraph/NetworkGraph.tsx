@@ -15,13 +15,8 @@ const NetworkGraph = () => {
     if (!containerRef.current) return;
 
     // Initialize the 3D force graph
-    const Graph = ForceGraph3D()
+    const Graph = new ForceGraph3D()(containerRef.current)
       .backgroundColor('rgba(0,0,0,0)')
-      .rendererConfig({
-        alpha: true,
-        antialias: true,
-        preserveDrawingBuffer: true
-      })(containerRef.current)
       .graphData(sampleData)
       .nodeLabel('title')
       .nodeColor((node: any) => {
@@ -76,6 +71,11 @@ const NetworkGraph = () => {
         );
       });
 
+    // Configure renderer
+    const renderer = Graph.renderer();
+    renderer.setClearAlpha(0);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    
     // Add camera controls
     Graph.controls().enableDamping = true;
     Graph.controls().dampingFactor = 0.1;
