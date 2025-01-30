@@ -15,9 +15,14 @@ const NetworkGraph = () => {
     if (!containerRef.current) return;
 
     // Initialize the 3D force graph
-    const Graph = ForceGraph3D()(containerRef.current)
-      .graphData(sampleData)
+    const Graph = ForceGraph3D()
       .backgroundColor('rgba(0,0,0,0)')
+      .rendererConfig({
+        alpha: true,
+        antialias: true,
+        preserveDrawingBuffer: true
+      })(containerRef.current)
+      .graphData(sampleData)
       .nodeLabel('title')
       .nodeColor((node: any) => {
         switch (node.type) {
