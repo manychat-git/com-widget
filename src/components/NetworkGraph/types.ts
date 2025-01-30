@@ -1,4 +1,4 @@
-export type NodeType = 'article' | 'author' | 'topic' | 'meme';
+export type NodeType = 'article' | 'youtube_video' | 'special_project';
 
 export interface Node {
   id: string;
