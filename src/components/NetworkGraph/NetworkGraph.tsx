@@ -75,6 +75,8 @@ const NetworkGraph = () => {
     const renderer = Graph.renderer();
     renderer.setClearAlpha(0);
     renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setClearColor(0x000000, 0);
+    renderer.alpha = true;
     
     // Add camera controls
     Graph.controls().enableDamping = true;
