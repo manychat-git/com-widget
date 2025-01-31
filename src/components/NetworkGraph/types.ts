@@ -6,6 +6,8 @@ export interface Node {
   title: string;
   description?: string;
   imageUrl?: string;
+  author?: string;
+  tags?: string;
   x?: number;
   y?: number;
   z?: number;
