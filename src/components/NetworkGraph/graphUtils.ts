@@ -1,29 +1,71 @@
 import { Node } from './types';
 
-// Параметры силы связей
-export const LINK_STRENGTHS = {
-  TYPE: 0.9,    // Сильная связь для одного типа контента
-  AUTHOR: 0.5,  // Средняя связь для одного автора
-  ISSUE: 0.7    // Умеренная связь для одного выпуска
-};
-
-// Параметры расстояний
-export const LINK_DISTANCES = {
-  TYPE: 50,    // Ближе друг к другу
-  AUTHOR: 70,  // Среднее расстояние
-  ISSUE: 90    // Дальше друг от друга
-};
-
-// Параметры линков
-export const LINK_PARAMS = {
-  WIDTH: 0.1,     
-  OPACITY: 0.3,   
+// Общие визуальные параметры для связей
+export const LINK_VISUAL = {
+  WIDTH: 0.1,
+  OPACITY: 0.1,
   COLOR: '#D7D7D7'
 };
 
+// Дефолтные настройки связей
+export const DEFAULT_LINK_SETTINGS = {
+  type: {
+    enabled: true,
+    strength: 0.1,
+    distance: 100
+  },
+  author: {
+    enabled: true,
+    strength: 0.1,
+    distance: 200
+  },
+  issue: {
+    enabled: true,
+    strength: 1,
+    distance: 30
+  }
+} as const;
+
+// Параметры физики графа
+export const GRAPH_PHYSICS_PARAMS = {
+  REPULSION: {
+    STRENGTH: -500,    // Сила отталкивания узлов
+    MAX_DISTANCE: 200  // Максимальная дистанция действия отталкивания
+  },
+  COLLISION: {
+    RADIUS: 1,       // Радиус коллизии узлов
+    STRENGTH: 0.7     // Сила коллизии
+  },
+  CENTER_FORCE: true  // Включить центральную силу (гравитацию к центру)
+};
+
+// Тип для настроек связей
+export interface LinkSettings {
+  type: { enabled: boolean; strength: number; distance: number };
+  author: { enabled: boolean; strength: number; distance: number };
+  issue: { enabled: boolean; strength: number; distance: number };
+}
+
+// Функция для получения параметров связей на основе настроек
+export const getLinkTypes = (settings: LinkSettings = DEFAULT_LINK_SETTINGS) => ({
+  TYPE: {
+    STRENGTH: settings.type.enabled ? settings.type.strength : 0,     
+    DISTANCE: settings.type.distance      
+  },
+  AUTHOR: {
+    STRENGTH: settings.author.enabled ? settings.author.strength : 0,     
+    DISTANCE: settings.author.distance       
+  },
+  ISSUE: {
+    STRENGTH: settings.issue.enabled ? settings.issue.strength : 0,     
+    DISTANCE: settings.issue.distance      
+  }
+});
+
 // Функция для создания связей между узлами
-export const generateLinks = (nodes: Node[]) => {
+export const generateLinks = (nodes: Node[], settings: LinkSettings = DEFAULT_LINK_SETTINGS) => {
   const links = [];
+  const linkTypes = getLinkTypes(settings);
 
   // Группируем узлы по типу контента
   const nodesByType: { [key: string]: Node[] } = {};
@@ -35,19 +77,21 @@ export const generateLinks = (nodes: Node[]) => {
   });
 
   // Создаем связи между узлами одного типа
-  Object.entries(nodesByType).forEach(([type, typeNodes]) => {
-    for (let i = 0; i < typeNodes.length; i++) {
-      for (let j = i + 1; j < typeNodes.length; j++) {
-        links.push({
-          source: typeNodes[i].id,
-          target: typeNodes[j].id,
-          strength: LINK_STRENGTHS.TYPE,
-          type: 'type-link',
-          linkType: type
-        });
+  if (settings.type.enabled) {
+    Object.entries(nodesByType).forEach(([type, typeNodes]) => {
+      for (let i = 0; i < typeNodes.length; i++) {
+        for (let j = i + 1; j < typeNodes.length; j++) {
+          links.push({
+            source: typeNodes[i].id,
+            target: typeNodes[j].id,
+            strength: linkTypes.TYPE.STRENGTH,
+            type: 'type-link',
+            linkType: type
+          });
+        }
       }
-    }
-  });
+    });
+  }
 
   // Группируем узлы по автору
   const nodesByAuthor: { [key: string]: Node[] } = {};
@@ -59,19 +103,21 @@ export const generateLinks = (nodes: Node[]) => {
   });
 
   // Создаем связи между узлами одного автора
-  Object.entries(nodesByAuthor).forEach(([author, authorNodes]) => {
-    for (let i = 0; i < authorNodes.length; i++) {
-      for (let j = i + 1; j < authorNodes.length; j++) {
-        links.push({
-          source: authorNodes[i].id,
-          target: authorNodes[j].id,
-          strength: LINK_STRENGTHS.AUTHOR,
-          type: 'author-link',
-          authorGroup: author
-        });
+  if (settings.author.enabled) {
+    Object.entries(nodesByAuthor).forEach(([author, authorNodes]) => {
+      for (let i = 0; i < authorNodes.length; i++) {
+        for (let j = i + 1; j < authorNodes.length; j++) {
+          links.push({
+            source: authorNodes[i].id,
+            target: authorNodes[j].id,
+            strength: linkTypes.AUTHOR.STRENGTH,
+            type: 'author-link',
+            authorGroup: author
+          });
+        }
       }
-    }
-  });
+    });
+  }
 
   // Группируем узлы по выпуску
   const nodesByIssue: { [key: string]: Node[] } = {};
@@ -83,19 +129,21 @@ export const generateLinks = (nodes: Node[]) => {
   });
 
   // Создаем связи между узлами одного выпуска
-  Object.entries(nodesByIssue).forEach(([issue, issueNodes]) => {
-    for (let i = 0; i < issueNodes.length; i++) {
-      for (let j = i + 1; j < issueNodes.length; j++) {
-        links.push({
-          source: issueNodes[i].id,
-          target: issueNodes[j].id,
-          strength: LINK_STRENGTHS.ISSUE,
-          type: 'issue-link',
-          issueGroup: issue
-        });
+  if (settings.issue.enabled) {
+    Object.entries(nodesByIssue).forEach(([issue, issueNodes]) => {
+      for (let i = 0; i < issueNodes.length; i++) {
+        for (let j = i + 1; j < issueNodes.length; j++) {
+          links.push({
+            source: issueNodes[i].id,
+            target: issueNodes[j].id,
+            strength: linkTypes.ISSUE.STRENGTH,
+            type: 'issue-link',
+            issueGroup: issue
+          });
+        }
       }
-    }
-  });
+    });
+  }
 
   return links;
 }; 

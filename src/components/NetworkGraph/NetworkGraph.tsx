@@ -3,16 +3,50 @@ import ForceGraph3D from '3d-force-graph';
 import { newData } from './newData';
 import InfoPanel from './InfoPanel';
 import GraphControls from './GraphControls';
+import GraphSettingsPanel from './GraphSettingsPanel';
 import { Node } from './types';
 import * as THREE from 'three';
 import * as d3 from 'd3';
-import { LINK_STRENGTHS, LINK_DISTANCES, LINK_PARAMS } from './graphUtils';
+import { GRAPH_PHYSICS_PARAMS, LINK_VISUAL, DEFAULT_LINK_SETTINGS, LinkSettings, getLinkTypes } from './graphUtils';
 
 const NetworkGraph = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const graphRef = useRef<any>(null);
   const tooltipRef = useRef<HTMLDivElement | null>(null);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  const [settings, setSettings] = useState<LinkSettings>(DEFAULT_LINK_SETTINGS);
+
+  const handleSettingsChange = (newSettings: LinkSettings) => {
+    setSettings(newSettings);
+    if (!graphRef.current) return;
+
+    // Обновляем силу и расстояние для каждого типа связи
+    const linkForce = graphRef.current.d3Force('link');
+    if (linkForce) {
+      linkForce
+        .distance((link: any) => {
+          if (!newSettings[link.type.split('-')[0] as keyof LinkSettings].enabled) return 0;
+          switch(link.type) {
+            case 'type-link': return newSettings.type.distance;
+            case 'author-link': return newSettings.author.distance;
+            case 'issue-link': return newSettings.issue.distance;
+            default: return 80;
+          }
+        })
+        .strength((link: any) => {
+          if (!newSettings[link.type.split('-')[0] as keyof LinkSettings].enabled) return 0;
+          switch(link.type) {
+            case 'type-link': return newSettings.type.strength;
+            case 'author-link': return newSettings.author.strength;
+            case 'issue-link': return newSettings.issue.strength;
+            default: return 0.6;
+          }
+        });
+
+      // Перезапускаем симуляцию
+      graphRef.current.d3ReheatSimulation();
+    }
+  };
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -22,6 +56,8 @@ const NetworkGraph = () => {
     tooltip.className = 'tooltip';
     document.body.appendChild(tooltip);
     tooltipRef.current = tooltip;
+
+    const linkTypes = getLinkTypes(settings);
 
     // Initialize the 3D force graph
     const Graph = new ForceGraph3D()(containerRef.current)
@@ -42,38 +78,38 @@ const NetworkGraph = () => {
         .distance((link: any) => {
           // Расстояние в зависимости от типа связи
           switch(link.type) {
-            case 'type-link': return LINK_DISTANCES.TYPE;
-            case 'author-link': return LINK_DISTANCES.AUTHOR;
-            case 'issue-link': return LINK_DISTANCES.ISSUE;
+            case 'type-link': return linkTypes.TYPE.DISTANCE;
+            case 'author-link': return linkTypes.AUTHOR.DISTANCE;
+            case 'issue-link': return linkTypes.ISSUE.DISTANCE;
             default: return 80;
           }
         })
         .strength((link: any) => {
           // Сила связи в зависимости от типа
           switch(link.type) {
-            case 'type-link': return LINK_STRENGTHS.TYPE;
-            case 'author-link': return LINK_STRENGTHS.AUTHOR;
-            case 'issue-link': return LINK_STRENGTHS.ISSUE;
+            case 'type-link': return linkTypes.TYPE.STRENGTH;
+            case 'author-link': return linkTypes.AUTHOR.STRENGTH;
+            case 'issue-link': return linkTypes.ISSUE.STRENGTH;
             default: return 0.6;
           }
         })
       )
       // Визуализация связей
-      .linkColor(() => LINK_PARAMS.COLOR)
-      .linkWidth(LINK_PARAMS.WIDTH)
-      .linkOpacity(LINK_PARAMS.OPACITY)
+      .linkColor(() => LINK_VISUAL.COLOR)
+      .linkWidth(() => LINK_VISUAL.WIDTH)
+      .linkOpacity(() => LINK_VISUAL.OPACITY)
       // Отталкивание узлов
       .d3Force('charge', d3.forceManyBody()
-        .strength(-100)
-        .distanceMax(200)
+        .strength(GRAPH_PHYSICS_PARAMS.REPULSION.STRENGTH)
+        .distanceMax(GRAPH_PHYSICS_PARAMS.REPULSION.MAX_DISTANCE)
       )
       // Сила коллизий
       .d3Force('collision', d3.forceCollide()
-        .radius(20)
-        .strength(0.7)
+        .radius(GRAPH_PHYSICS_PARAMS.COLLISION.RADIUS)
+        .strength(GRAPH_PHYSICS_PARAMS.COLLISION.STRENGTH)
       )
       // Центральная сила (гравитация к центру)
-      .d3Force('center', d3.forceCenter())
+      .d3Force('center', GRAPH_PHYSICS_PARAMS.CENTER_FORCE ? d3.forceCenter() : null)
       // Визуальные параметры
       .nodeRelSize(6) // Базовый размер узлов
       .nodeThreeObject((node: any) => {
@@ -242,15 +278,18 @@ const NetworkGraph = () => {
   return (
     <div className="relative w-full h-screen">
       <div ref={containerRef} className="w-full h-full" />
-      <InfoPanel
-        selectedNode={selectedNode}
-        onClose={() => setSelectedNode(null)}
-      />
+      <GraphSettingsPanel onSettingsChange={handleSettingsChange} />
       <GraphControls
         onZoomIn={handleZoomIn}
         onZoomOut={handleZoomOut}
         onReset={handleReset}
       />
+      {selectedNode && (
+        <InfoPanel
+          node={selectedNode}
+          onClose={() => setSelectedNode(null)}
+        />
+      )}
     </div>
   );
 };
