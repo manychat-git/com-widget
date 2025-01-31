@@ -1,9 +1,9 @@
 import { Node } from './types';
 
-// Общие визуальные параметры для связей
+// Общие визуальные параметры для связей (будут использоваться как дефолтные)
 export const LINK_VISUAL = {
   WIDTH: 0.1,
-  OPACITY: 0.1,
+  OPACITY: 0.4,
   COLOR: '#D7D7D7'
 };
 
@@ -23,6 +23,22 @@ export const DEFAULT_LINK_SETTINGS = {
     enabled: true,
     strength: 1,
     distance: 30
+  },
+  visual: {
+    width: LINK_VISUAL.WIDTH,
+    opacity: LINK_VISUAL.OPACITY,
+    color: LINK_VISUAL.COLOR
+  },
+  physics: {
+    repulsion: {
+      strength: -500,
+      maxDistance: 200
+    },
+    collision: {
+      radius: 1,
+      strength: 0.7
+    },
+    centerForce: true
   }
 } as const;
 
@@ -44,6 +60,12 @@ export interface LinkSettings {
   type: { enabled: boolean; strength: number; distance: number };
   author: { enabled: boolean; strength: number; distance: number };
   issue: { enabled: boolean; strength: number; distance: number };
+  visual: { width: number; opacity: number; color: string };
+  physics: {
+    repulsion: { strength: number; maxDistance: number };
+    collision: { radius: number; strength: number };
+    centerForce: boolean;
+  };
 }
 
 // Функция для получения параметров связей на основе настроек
