@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import ForceGraph3D from '3d-force-graph';
 import { newData } from './newData';
 import InfoPanel from './InfoPanel';
-import GraphControls from './GraphControls';
+import GraphControls from './GraphControls.tsx';
 import GraphSettingsPanel from './GraphSettingsPanel';
 import { Node } from './types';
 import * as THREE from 'three';
