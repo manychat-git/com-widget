@@ -28,9 +28,9 @@ const NetworkGraph = () => {
       .nodeLabel(null) // Отключаем встроенный тултип
       .nodeColor((node: any) => {
         switch (node.type) {
-          case 'article': return '#4A90E2';
-          case 'youtube_video': return '#FF6B6B';
-          case 'special_project': return '#50C878';
+          case 'article': return '#0057FF';
+          case 'youtube_video': return '#FD00FD';
+          case 'special_project': return '#FF4B00';
           default: return '#999';
         }
       })
@@ -118,6 +118,29 @@ const NetworkGraph = () => {
             tooltipRef.current.style.left = `${screenPos.x}px`;
             tooltipRef.current.style.top = `${screenPos.y - 10}px`;
             tooltipRef.current.textContent = node.title.toUpperCase();
+            
+            // Set background color based on node type
+            switch (node.type) {
+              case 'article':
+                tooltipRef.current.style.backgroundColor = '#0057FF';
+                break;
+              case 'youtube_video':
+                tooltipRef.current.style.backgroundColor = '#FD00FD';
+                break;
+              case 'special_project':
+                tooltipRef.current.style.backgroundColor = '#FF4B00';
+                break;
+              default:
+                tooltipRef.current.style.backgroundColor = '#999';
+            }
+            tooltipRef.current.style.color = '#FFFFFF';
+            tooltipRef.current.style.padding = '2px 6px';
+            tooltipRef.current.style.borderRadius = '4px';
+            tooltipRef.current.style.fontSize = '14px';
+            tooltipRef.current.style.fontWeight = '500';
+            tooltipRef.current.style.whiteSpace = 'nowrap';
+            tooltipRef.current.style.zIndex = '1000';
+            tooltipRef.current.style.transition = 'all 0.2s ease';
           } else {
             tooltipRef.current.style.display = 'none';
           }
