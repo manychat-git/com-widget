@@ -18,33 +18,40 @@ const NetworkGraph = () => {
 
   const handleSettingsChange = (newSettings: LinkSettings) => {
     setSettings(newSettings);
-    if (!graphRef.current) return;
+    
+    // Динамическое обновление параметров без пересоздания графа
+    if (graphRef.current) {
+      // Обновляем визуальные параметры
+      graphRef.current
+        .linkColor(() => newSettings.visual.color)
+        .linkWidth(() => newSettings.visual.width)
+        .linkOpacity(newSettings.visual.opacity);
 
-    // Обновляем силу и расстояние для каждого типа связи
-    const linkForce = graphRef.current.d3Force('link');
-    if (linkForce) {
-      linkForce
-        .distance((link: any) => {
-          if (!newSettings[link.type.split('-')[0] as keyof LinkSettings].enabled) return 0;
-          switch(link.type) {
-            case 'type-link': return newSettings.type.distance;
-            case 'author-link': return newSettings.author.distance;
-            case 'issue-link': return newSettings.issue.distance;
-            default: return 80;
-          }
-        })
-        .strength((link: any) => {
-          if (!newSettings[link.type.split('-')[0] as keyof LinkSettings].enabled) return 0;
-          switch(link.type) {
-            case 'type-link': return newSettings.type.strength;
-            case 'author-link': return newSettings.author.strength;
-            case 'issue-link': return newSettings.issue.strength;
-            default: return 0.6;
-          }
-        });
+      // Обновляем параметры физики
+      const linkForce = graphRef.current.d3Force('link');
+      if (linkForce) {
+        linkForce
+          .distance((link: any) => {
+            switch(link.type) {
+              case 'type-link': return newSettings.type.distance;
+              case 'author-link': return newSettings.author.distance;
+              case 'issue-link': return newSettings.issue.distance;
+              default: return 80;
+            }
+          })
+          .strength((link: any) => {
+            if (!newSettings[link.type.split('-')[0] as keyof LinkSettings].enabled) return 0;
+            switch(link.type) {
+              case 'type-link': return newSettings.type.strength;
+              case 'author-link': return newSettings.author.strength;
+              case 'issue-link': return newSettings.issue.strength;
+              default: return 0.6;
+            }
+          });
 
-      // Перезапускаем симуляцию
-      graphRef.current.d3ReheatSimulation();
+        // Мягкий перезапуск симуляции
+        graphRef.current.d3ReheatSimulation();
+      }
     }
   };
 
@@ -60,10 +67,10 @@ const NetworkGraph = () => {
     const linkTypes = getLinkTypes(settings);
 
     // Initialize the 3D force graph
-    const Graph = new ForceGraph3D()(containerRef.current)
+    const Graph = ForceGraph3D()(containerRef.current)
       .backgroundColor('rgba(0,0,0,0)')
       .graphData(newData)
-      .nodeLabel(null) // Отключаем встроенный тултип
+      .nodeLabel(null)
       .nodeColor((node: any) => {
         switch (node.type) {
           case 'article': return '#0057FF';
@@ -76,7 +83,6 @@ const NetworkGraph = () => {
       .d3Force('link', d3.forceLink()
         .id((d: any) => d.id)
         .distance((link: any) => {
-          // Расстояние в зависимости от типа связи
           switch(link.type) {
             case 'type-link': return linkTypes.TYPE.DISTANCE;
             case 'author-link': return linkTypes.AUTHOR.DISTANCE;
@@ -85,7 +91,6 @@ const NetworkGraph = () => {
           }
         })
         .strength((link: any) => {
-          // Сила связи в зависимости от типа
           switch(link.type) {
             case 'type-link': return linkTypes.TYPE.STRENGTH;
             case 'author-link': return linkTypes.AUTHOR.STRENGTH;
@@ -95,9 +100,9 @@ const NetworkGraph = () => {
         })
       )
       // Визуализация связей
-      .linkColor(() => LINK_VISUAL.COLOR)
-      .linkWidth(() => LINK_VISUAL.WIDTH)
-      .linkOpacity(() => LINK_VISUAL.OPACITY)
+      .linkColor(() => settings.visual.color)
+      .linkWidth(() => settings.visual.width)
+      .linkOpacity(settings.visual.opacity)
       // Отталкивание узлов
       .d3Force('charge', d3.forceManyBody()
         .strength(GRAPH_PHYSICS_PARAMS.REPULSION.STRENGTH)
@@ -123,7 +128,7 @@ const NetworkGraph = () => {
         canvas.height = Math.round(1024 * (9/16));
         
         // Calculate corner radius (3% of width)
-        const cornerRadiusPercent = 0.1; // 3% от ширины
+        const cornerRadiusPercent = 0.1;
         const cornerRadius = Math.round(canvas.width * cornerRadiusPercent);
         
         // Create texture from canvas
@@ -253,7 +258,7 @@ const NetworkGraph = () => {
       }
       Graph._destructor();
     };
-  }, []);
+  }, []); // Теперь эффект запускается только при монтировании
 
   const handleZoomIn = () => {
     if (graphRef.current) {
