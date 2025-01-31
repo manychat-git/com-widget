@@ -291,7 +291,7 @@ const NetworkGraph = () => {
       />
       {selectedNode && (
         <InfoPanel
-          node={selectedNode}
+          selectedNode={selectedNode}
           onClose={() => setSelectedNode(null)}
         />
       )}
