@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import ForceGraph3D from '3d-force-graph';
-import { sampleData } from './sampleData';
+import { newData } from './newData';
 import InfoPanel from './InfoPanel';
 import GraphControls from './GraphControls';
 import { Node } from './types';
 import * as THREE from 'three';
+import * as d3 from 'd3';
+import { LINK_STRENGTHS, LINK_DISTANCES, LINK_PARAMS } from './graphUtils';
 
 const NetworkGraph = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -24,7 +26,7 @@ const NetworkGraph = () => {
     // Initialize the 3D force graph
     const Graph = new ForceGraph3D()(containerRef.current)
       .backgroundColor('rgba(0,0,0,0)')
-      .graphData(sampleData)
+      .graphData(newData)
       .nodeLabel(null) // Отключаем встроенный тултип
       .nodeColor((node: any) => {
         switch (node.type) {
@@ -34,6 +36,46 @@ const NetworkGraph = () => {
           default: return '#999';
         }
       })
+      // Физика графа
+      .d3Force('link', d3.forceLink()
+        .id((d: any) => d.id)
+        .distance((link: any) => {
+          // Расстояние в зависимости от типа связи
+          switch(link.type) {
+            case 'type-link': return LINK_DISTANCES.TYPE;
+            case 'author-link': return LINK_DISTANCES.AUTHOR;
+            case 'issue-link': return LINK_DISTANCES.ISSUE;
+            default: return 80;
+          }
+        })
+        .strength((link: any) => {
+          // Сила связи в зависимости от типа
+          switch(link.type) {
+            case 'type-link': return LINK_STRENGTHS.TYPE;
+            case 'author-link': return LINK_STRENGTHS.AUTHOR;
+            case 'issue-link': return LINK_STRENGTHS.ISSUE;
+            default: return 0.6;
+          }
+        })
+      )
+      // Визуализация связей
+      .linkColor(() => LINK_PARAMS.COLOR)
+      .linkWidth(LINK_PARAMS.WIDTH)
+      .linkOpacity(LINK_PARAMS.OPACITY)
+      // Отталкивание узлов
+      .d3Force('charge', d3.forceManyBody()
+        .strength(-100)
+        .distanceMax(200)
+      )
+      // Сила коллизий
+      .d3Force('collision', d3.forceCollide()
+        .radius(20)
+        .strength(0.7)
+      )
+      // Центральная сила (гравитация к центру)
+      .d3Force('center', d3.forceCenter())
+      // Визуальные параметры
+      .nodeRelSize(6) // Базовый размер узлов
       .nodeThreeObject((node: any) => {
         // Create a canvas for preprocessing
         const canvas = document.createElement('canvas');
@@ -97,8 +139,6 @@ const NetworkGraph = () => {
         
         return sprite;
       })
-      .linkWidth(0.1)
-      .linkOpacity(0.5)
       .onNodeClick((node: any) => {
         setSelectedNode(node);
         // Aim at node from outside
