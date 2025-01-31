@@ -5,6 +5,7 @@ export interface Node {
   type: NodeType;
   title: string;
   description?: string;
+  descriptor?: string;
   imageUrl?: string;
   author?: string;
   tags?: string;

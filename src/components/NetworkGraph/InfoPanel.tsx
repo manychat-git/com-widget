@@ -33,6 +33,13 @@ const InfoPanel = ({ selectedNode, onClose }: InfoPanelProps) => {
         {/* Заголовок */}
         <h2 className="text-xl font-semibold">{selectedNode.title}</h2>
         
+        {/* Дескриптор */}
+        {selectedNode.descriptor && (
+          <div className="text-sm text-gray-500 italic">
+            {selectedNode.descriptor}
+          </div>
+        )}
+
         {/* Автор */}
         {selectedNode.author && (
           <div className="text-sm text-gray-600">
@@ -59,7 +66,6 @@ const InfoPanel = ({ selectedNode, onClose }: InfoPanelProps) => {
           ${selectedNode.type === 'article' ? 'bg-blue-100 text-blue-800' : ''}
           ${selectedNode.type === 'youtube_video' ? 'bg-pink-100 text-pink-800' : ''}
           ${selectedNode.type === 'special_project' ? 'bg-orange-100 text-orange-800' : ''}
-          ${selectedNode.type === 'meme' ? 'bg-purple-100 text-purple-800' : ''}
         `}>
           {selectedNode.type}
         </span>
