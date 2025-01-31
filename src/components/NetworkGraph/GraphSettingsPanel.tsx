@@ -88,8 +88,8 @@ const GraphSettingsPanel: React.FC<GraphSettingsPanelProps> = ({ settings, onSet
       <div className="mb-6">
         <div className="flex items-center justify-between mb-2">
           <div>
-            <h3 className="font-medium">Type</h3>
-            <p className="text-sm text-gray-500">Link by content type</p>
+            <h3 className="font-medium">Content Type</h3>
+            <p className="text-sm text-gray-500">Link by content (articles, videos, etc)</p>
           </div>
           <Switch
             checked={settings.type.enabled}

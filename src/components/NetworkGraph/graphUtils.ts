@@ -102,7 +102,6 @@ export const generateLinks = (nodes: Node[], settings: LinkSettings = DEFAULT_LI
           links.push({
             source: typeNodes[i].id,
             target: typeNodes[j].id,
-            strength: linkTypes.TYPE.STRENGTH,
             type: 'type-link',
             linkType: type
           });
@@ -114,10 +113,12 @@ export const generateLinks = (nodes: Node[], settings: LinkSettings = DEFAULT_LI
   // Группируем узлы по автору
   const nodesByAuthor: { [key: string]: Node[] } = {};
   nodes.forEach(node => {
-    if (!nodesByAuthor[node.author]) {
-      nodesByAuthor[node.author] = [];
+    if (node.author) {  // Проверяем наличие автора
+      if (!nodesByAuthor[node.author]) {
+        nodesByAuthor[node.author] = [];
+      }
+      nodesByAuthor[node.author].push(node);
     }
-    nodesByAuthor[node.author].push(node);
   });
 
   // Создаем связи между узлами одного автора
@@ -128,7 +129,6 @@ export const generateLinks = (nodes: Node[], settings: LinkSettings = DEFAULT_LI
           links.push({
             source: authorNodes[i].id,
             target: authorNodes[j].id,
-            strength: linkTypes.AUTHOR.STRENGTH,
             type: 'author-link',
             authorGroup: author
           });
@@ -140,10 +140,12 @@ export const generateLinks = (nodes: Node[], settings: LinkSettings = DEFAULT_LI
   // Группируем узлы по выпуску
   const nodesByIssue: { [key: string]: Node[] } = {};
   nodes.forEach(node => {
-    if (!nodesByIssue[node.issue]) {
-      nodesByIssue[node.issue] = [];
+    if (node.issue) {  // Проверяем наличие выпуска
+      if (!nodesByIssue[node.issue]) {
+        nodesByIssue[node.issue] = [];
+      }
+      nodesByIssue[node.issue].push(node);
     }
-    nodesByIssue[node.issue].push(node);
   });
 
   // Создаем связи между узлами одного выпуска
@@ -154,7 +156,6 @@ export const generateLinks = (nodes: Node[], settings: LinkSettings = DEFAULT_LI
           links.push({
             source: issueNodes[i].id,
             target: issueNodes[j].id,
-            strength: linkTypes.ISSUE.STRENGTH,
             type: 'issue-link',
             issueGroup: issue
           });

@@ -7,7 +7,7 @@ import GraphSettingsPanel from './GraphSettingsPanel';
 import { Node } from './types';
 import * as THREE from 'three';
 import * as d3 from 'd3';
-import { GRAPH_PHYSICS_PARAMS, DEFAULT_LINK_SETTINGS, LinkSettings, getLinkTypes } from './graphUtils';
+import { GRAPH_PHYSICS_PARAMS, DEFAULT_LINK_SETTINGS, LinkSettings, getLinkTypes, generateLinks } from './graphUtils';
 
 const NetworkGraph = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -19,8 +19,11 @@ const NetworkGraph = () => {
   const handleSettingsChange = (newSettings: LinkSettings) => {
     setSettings(newSettings);
     
-    // Динамическое обновление параметров без пересоздания графа
     if (graphRef.current) {
+      // Пересоздаем связи с новыми настройками
+      const newLinks = generateLinks(newData.nodes, newSettings);
+      graphRef.current.graphData({ nodes: newData.nodes, links: newLinks });
+
       // Обновляем визуальные параметры
       graphRef.current
         .linkColor(() => newSettings.visual.color)
@@ -40,18 +43,54 @@ const NetworkGraph = () => {
             }
           })
           .strength((link: any) => {
-            if (!newSettings[link.type.split('-')[0] as keyof LinkSettings].enabled) return 0;
             switch(link.type) {
-              case 'type-link': return newSettings.type.strength;
-              case 'author-link': return newSettings.author.strength;
-              case 'issue-link': return newSettings.issue.strength;
-              default: return 0.6;
+              case 'type-link': return newSettings.type.enabled ? newSettings.type.strength : 0;
+              case 'author-link': return newSettings.author.enabled ? newSettings.author.strength : 0;
+              case 'issue-link': return newSettings.issue.enabled ? newSettings.issue.strength : 0;
+              default: return 0;
             }
           });
-
-        // Мягкий перезапуск симуляции
-        graphRef.current.d3ReheatSimulation();
       }
+
+      // Обновляем остальные силы
+      graphRef.current
+        .d3Force('charge', d3.forceManyBody()
+          .strength(newSettings.physics.repulsion.strength)
+          .distanceMax(newSettings.physics.repulsion.maxDistance)
+        )
+        .d3Force('collision', d3.forceCollide()
+          .radius(newSettings.physics.collision.radius)
+          .strength(newSettings.physics.collision.strength)
+        );
+
+      // Обновляем Center Gravity
+      if (newSettings.physics.centerForce) {
+        graphRef.current.d3Force('center', d3.forceCenter());
+      } else {
+        graphRef.current.d3Force('center', null);
+        // Сбрасываем позиции к текущим, чтобы предотвратить резкое движение
+        const nodes = graphRef.current.graphData().nodes;
+        nodes.forEach(node => {
+          node.fx = node.x;
+          node.fy = node.y;
+          node.fz = node.z;
+        });
+        setTimeout(() => {
+          nodes.forEach(node => {
+            node.fx = undefined;
+            node.fy = undefined;
+            node.fz = undefined;
+          });
+        }, 100);
+      }
+
+      // Перезапускаем симуляцию
+      graphRef.current
+        .d3AlphaDecay(0.0228)
+        .d3VelocityDecay(0.4)
+        .d3AlphaTarget(0)
+        .resetCountdown()
+        .numDimensions(3);
     }
   };
 
@@ -105,16 +144,16 @@ const NetworkGraph = () => {
       .linkOpacity(settings.visual.opacity)
       // Отталкивание узлов
       .d3Force('charge', d3.forceManyBody()
-        .strength(GRAPH_PHYSICS_PARAMS.REPULSION.STRENGTH)
-        .distanceMax(GRAPH_PHYSICS_PARAMS.REPULSION.MAX_DISTANCE)
+        .strength(settings.physics.repulsion.strength)
+        .distanceMax(settings.physics.repulsion.maxDistance)
       )
       // Сила коллизий
       .d3Force('collision', d3.forceCollide()
-        .radius(GRAPH_PHYSICS_PARAMS.COLLISION.RADIUS)
-        .strength(GRAPH_PHYSICS_PARAMS.COLLISION.STRENGTH)
+        .radius(settings.physics.collision.radius)
+        .strength(settings.physics.collision.strength)
       )
       // Центральная сила (гравитация к центру)
-      .d3Force('center', GRAPH_PHYSICS_PARAMS.CENTER_FORCE ? d3.forceCenter() : null)
+      .d3Force('center', settings.physics.centerForce ? d3.forceCenter() : null)
       // Визуальные параметры
       .nodeRelSize(6) // Базовый размер узлов
       .nodeThreeObject((node: any) => {
@@ -258,7 +297,7 @@ const NetworkGraph = () => {
       }
       Graph._destructor();
     };
-  }, []); // Теперь эффект запускается только при монтировании
+  }, []); // Эффект запускается только при монтировании
 
   const handleZoomIn = () => {
     if (graphRef.current) {
