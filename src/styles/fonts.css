@@ -1,0 +1,7 @@
+@font-face {
+  font-family: 'CoFo Sans Mono';
+  src: url('../assets/fonts/CoFoSansMono-Regular.otf') format('opentype'),
+       url('../assets/fonts/CoFoSansMono-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+} 

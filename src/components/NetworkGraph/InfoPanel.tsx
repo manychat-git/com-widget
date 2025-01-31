@@ -1,4 +1,5 @@
 import { Node } from './types';
+import '../styles/fonts.css';
 
 interface InfoPanelProps {
   selectedNode: Node | null;
@@ -35,7 +36,7 @@ const InfoPanel = ({ selectedNode, onClose }: InfoPanelProps) => {
         
         {/* Дескриптор */}
         {selectedNode.descriptor && (
-          <div className="text-sm text-gray-500 italic">
+          <div className="text-sm text-gray-500 font-['CoFo Sans Mono']">
             {selectedNode.descriptor}
           </div>
         )}
