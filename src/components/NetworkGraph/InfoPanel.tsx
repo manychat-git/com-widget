@@ -1,5 +1,5 @@
 import { Node } from './types';
-import '../styles/fonts.css';
+import '@/styles/fonts.css';
 
 interface InfoPanelProps {
   selectedNode: Node | null;
