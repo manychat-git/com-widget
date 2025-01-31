@@ -7,7 +7,7 @@ import GraphSettingsPanel from './GraphSettingsPanel';
 import { Node } from './types';
 import * as THREE from 'three';
 import * as d3 from 'd3';
-import { GRAPH_PHYSICS_PARAMS, LINK_VISUAL, DEFAULT_LINK_SETTINGS, LinkSettings, getLinkTypes } from './graphUtils';
+import { GRAPH_PHYSICS_PARAMS, DEFAULT_LINK_SETTINGS, LinkSettings, getLinkTypes } from './graphUtils';
 
 const NetworkGraph = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -283,7 +283,10 @@ const NetworkGraph = () => {
   return (
     <div className="relative w-full h-screen">
       <div ref={containerRef} className="w-full h-full" />
-      <GraphSettingsPanel onSettingsChange={handleSettingsChange} />
+      <GraphSettingsPanel 
+        settings={settings}
+        onSettingsChange={handleSettingsChange} 
+      />
       <GraphControls
         onZoomIn={handleZoomIn}
         onZoomOut={handleZoomOut}

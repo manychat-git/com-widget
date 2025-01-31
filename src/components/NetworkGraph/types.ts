@@ -9,6 +9,7 @@ export interface Node {
   imageUrl?: string;
   author?: string;
   tags?: string;
+  issue?: string;
   x?: number;
   y?: number;
   z?: number;

@@ -5,12 +5,11 @@ import { DEFAULT_LINK_SETTINGS, LinkSettings } from './graphUtils';
 import { Separator } from '../ui/separator';
 
 interface GraphSettingsPanelProps {
+  settings: LinkSettings;
   onSettingsChange: (settings: LinkSettings) => void;
 }
 
-const GraphSettingsPanel: React.FC<GraphSettingsPanelProps> = ({ onSettingsChange }) => {
-  const [settings, setSettings] = useState(DEFAULT_LINK_SETTINGS);
-
+const GraphSettingsPanel: React.FC<GraphSettingsPanelProps> = ({ settings, onSettingsChange }) => {
   const handleSettingChange = (
     category: 'type' | 'author' | 'issue',
     field: keyof LinkSettings[keyof LinkSettings],
@@ -23,7 +22,6 @@ const GraphSettingsPanel: React.FC<GraphSettingsPanelProps> = ({ onSettingsChang
         [field]: value
       }
     };
-    setSettings(newSettings);
     onSettingsChange(newSettings);
   };
 
@@ -38,7 +36,6 @@ const GraphSettingsPanel: React.FC<GraphSettingsPanelProps> = ({ onSettingsChang
         [field]: value
       }
     };
-    setSettings(newSettings);
     onSettingsChange(newSettings);
   };
 
@@ -57,7 +54,6 @@ const GraphSettingsPanel: React.FC<GraphSettingsPanelProps> = ({ onSettingsChang
         }
       }
     };
-    setSettings(newSettings);
     onSettingsChange(newSettings);
   };
 
@@ -69,12 +65,10 @@ const GraphSettingsPanel: React.FC<GraphSettingsPanelProps> = ({ onSettingsChang
         centerForce: checked
       }
     };
-    setSettings(newSettings);
     onSettingsChange(newSettings);
   };
 
   const handleReset = () => {
-    setSettings(DEFAULT_LINK_SETTINGS);
     onSettingsChange(DEFAULT_LINK_SETTINGS);
   };
 
@@ -278,8 +272,8 @@ const GraphSettingsPanel: React.FC<GraphSettingsPanelProps> = ({ onSettingsChang
             <Slider
               value={settings.visual.width}
               onChange={(_, value) => handleVisualChange('width', value as number)}
-              min={0}
-              max={1}
+              min={0.1}
+              max={1.0}
               step={0.1}
               sx={{ color: '#000000' }}
             />

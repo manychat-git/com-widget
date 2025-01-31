@@ -1,14 +1,8 @@
 import { Node } from './types';
 
-// Общие визуальные параметры для связей (будут использоваться как дефолтные)
-export const LINK_VISUAL = {
-  WIDTH: 0.1,
-  OPACITY: 0.4,
-  COLOR: '#D7D7D7'
-};
-
-// Дефолтные настройки связей
-export const DEFAULT_LINK_SETTINGS = {
+// Дефолтные настройки для всех параметров графа
+export const DEFAULT_LINK_SETTINGS: LinkSettings = {
+  // Настройки связей
   type: {
     enabled: true,
     strength: 0.1,
@@ -24,11 +18,13 @@ export const DEFAULT_LINK_SETTINGS = {
     strength: 1,
     distance: 30
   },
+  // Визуальные настройки
   visual: {
-    width: LINK_VISUAL.WIDTH,
-    opacity: LINK_VISUAL.OPACITY,
-    color: LINK_VISUAL.COLOR
+    width: 0.1,
+    opacity: 0.4,
+    color: '#D7D7D7'
   },
+  // Физические параметры
   physics: {
     repulsion: {
       strength: -500,
@@ -40,19 +36,19 @@ export const DEFAULT_LINK_SETTINGS = {
     },
     centerForce: true
   }
-} as const;
+};
 
 // Параметры физики графа
 export const GRAPH_PHYSICS_PARAMS = {
   REPULSION: {
-    STRENGTH: -500,    // Сила отталкивания узлов
-    MAX_DISTANCE: 200  // Максимальная дистанция действия отталкивания
+    STRENGTH: DEFAULT_LINK_SETTINGS.physics.repulsion.strength,
+    MAX_DISTANCE: DEFAULT_LINK_SETTINGS.physics.repulsion.maxDistance
   },
   COLLISION: {
-    RADIUS: 1,       // Радиус коллизии узлов
-    STRENGTH: 0.7     // Сила коллизии
+    RADIUS: DEFAULT_LINK_SETTINGS.physics.collision.radius,
+    STRENGTH: DEFAULT_LINK_SETTINGS.physics.collision.strength
   },
-  CENTER_FORCE: true  // Включить центральную силу (гравитацию к центру)
+  CENTER_FORCE: DEFAULT_LINK_SETTINGS.physics.centerForce
 };
 
 // Тип для настроек связей
