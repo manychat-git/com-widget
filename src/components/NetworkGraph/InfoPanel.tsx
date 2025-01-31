@@ -1,6 +1,14 @@
 import { Node } from './types';
 import '@/styles/fonts.css';
 
+// Функция для форматирования имени автора
+const formatAuthorName = (author: string): string => {
+  return author
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
+
 interface InfoPanelProps {
   selectedNode: Node | null;
   onClose: () => void;
@@ -22,6 +30,28 @@ const InfoPanel = ({ selectedNode, onClose }: InfoPanelProps) => {
       </button>
       
       <div className="mt-8 space-y-4">
+        {/* Теги и тип контента */}
+        <div className="flex flex-wrap gap-2">
+          {/* Тип контента */}
+          <span className={`inline-block px-2 py-1 rounded-sm text-xs text-white font-medium cofo-sans-mono
+            ${selectedNode.type === 'article' ? 'bg-[#0057FF]' : ''}
+            ${selectedNode.type === 'youtube_video' ? 'bg-[#FD00FD]' : ''}
+            ${selectedNode.type === 'special_project' ? 'bg-[#FF4B00]' : ''}
+          `}>
+            {selectedNode.type.toUpperCase()}
+          </span>
+          
+          {/* Остальные теги */}
+          {tags.length > 0 && tags.map((tag, index) => (
+            <span
+              key={index}
+              className="inline-block px-2 py-1 bg-gray-800 text-white rounded-sm text-xs font-medium cofo-sans-mono"
+            >
+              {tag.toUpperCase()}
+            </span>
+          ))}
+        </div>
+
         {/* Изображение */}
         {selectedNode.imageUrl && (
           <img 
@@ -36,7 +66,7 @@ const InfoPanel = ({ selectedNode, onClose }: InfoPanelProps) => {
         
         {/* Дескриптор */}
         {selectedNode.descriptor && (
-          <div className="text-sm text-gray-500 font-['CoFo Sans Mono']">
+          <div className="text-sm text-gray-500 cofo-sans-mono">
             {selectedNode.descriptor}
           </div>
         )}
@@ -44,32 +74,9 @@ const InfoPanel = ({ selectedNode, onClose }: InfoPanelProps) => {
         {/* Автор */}
         {selectedNode.author && (
           <div className="text-sm text-gray-600">
-            by <span className="font-medium">{selectedNode.author}</span>
+            by <span className="font-medium">{formatAuthorName(selectedNode.author)}</span>
           </div>
         )}
-
-        {/* Теги */}
-        {tags.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {tags.map((tag, index) => (
-              <span
-                key={index}
-                className="inline-block px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        )}
-
-        {/* Тип контента */}
-        <span className={`inline-block px-2 py-1 rounded-full text-xs
-          ${selectedNode.type === 'article' ? 'bg-blue-100 text-blue-800' : ''}
-          ${selectedNode.type === 'youtube_video' ? 'bg-pink-100 text-pink-800' : ''}
-          ${selectedNode.type === 'special_project' ? 'bg-orange-100 text-orange-800' : ''}
-        `}>
-          {selectedNode.type}
-        </span>
         
         {/* Описание */}
         {selectedNode.description && (
