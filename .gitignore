@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Игнорируем все файлы
+*
+# Кроме собранных файлов
+!dist/
+!dist/**/*
+!.gitignore
+!README.md
