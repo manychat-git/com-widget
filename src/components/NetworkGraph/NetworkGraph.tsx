@@ -5,6 +5,7 @@ import GraphControls from './GraphControls';
 import { Node } from './types';
 import * as THREE from 'three';
 import * as d3 from 'd3';
+import gsap from 'gsap';
 import { GRAPH_PHYSICS_PARAMS, DEFAULT_LINK_SETTINGS, LinkSettings, getLinkTypes, generateLinks } from './graphUtils';
 
 const NetworkGraph = () => {
@@ -228,20 +229,66 @@ const NetworkGraph = () => {
         const description = document.querySelector('[data-w-description]');
         const closeBtn = document.querySelector('[data-w-close]');
         
+        // Reset content styles for animation
+        const contentElements = [image, author, title, description].filter(Boolean);
+        gsap.set(contentElements, {
+          autoAlpha: 0,
+          scale: 0.95,
+          filter: 'blur(10px) brightness(1.5)'
+        });
+        
         // Fill popup with data
         if (image) (image as HTMLImageElement).src = node.imageUrl;
         if (author) author.textContent = node.author ? node.author.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : '';
         if (title) title.textContent = node.title;
         if (description) description.textContent = node.descriptor || '';
         
-        // Show popup
-        if (popup) popup.style.display = 'flex';
+        // Show and animate popup
+        if (popup) {
+          popup.style.display = 'flex';
+          
+          // Animate popup and content simultaneously
+          gsap.to(popup, {
+            y: '0%',
+            duration: 0.5,
+            ease: 'power3.out'
+          });
+          
+          gsap.to(contentElements, {
+            autoAlpha: 1,
+            scale: 1,
+            filter: 'blur(0px) brightness(1)',
+            duration: 0.3,
+            ease: 'power2.out'
+          });
+        }
         
         // Add close handler
         if (closeBtn) {
           closeBtn.addEventListener('click', () => {
-            if (popup) popup.style.display = 'none';
-            setSelectedNode(null);
+            if (popup) {
+              const timeline = gsap.timeline({
+                onComplete: () => {
+                  popup.style.display = 'none';
+                  setSelectedNode(null);
+                }
+              });
+
+              // Animate both simultaneously
+              timeline.to([image, author, title, description], {
+                autoAlpha: 0,
+                scale: 0.95,
+                filter: 'blur(10px) brightness(1.5)',
+                duration: 0.2,
+                ease: 'power2.in'
+              }, 0);
+
+              timeline.to(popup, {
+                y: '100%',
+                duration: 0.4,
+                ease: 'power3.inOut'
+              }, 0); // Start at the same time (position 0)
+            }
           });
         }
 
