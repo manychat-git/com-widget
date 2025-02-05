@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import ForceGraph3D from '3d-force-graph';
 import { newData } from './newData';
-import GraphControls from './GraphControls';
 import { Node } from './types';
 import * as THREE from 'three';
 import * as d3 from 'd3';
@@ -113,6 +112,7 @@ const NetworkGraph = () => {
       .backgroundColor('rgba(0,0,0,0)')
       .graphData(newData)
       .nodeLabel(null)
+      .cameraPosition({ x: 0, y: 0, z: 200 })
       .nodeColor((node: any) => {
         switch (node.type) {
           case 'article': return '#0057FF';
@@ -362,6 +362,14 @@ const NetworkGraph = () => {
     // Save graph reference
     graphRef.current = Graph;
 
+    // Add reset button handler
+    const resetButton = document.querySelector('[data-w-reset]');
+    if (resetButton) {
+      resetButton.addEventListener('click', () => {
+        Graph.cameraPosition({ x: 0, y: 0, z: 200 }, { x: 0, y: 0, z: 0 }, 1000);
+      });
+    }
+
     // Handle window resize
     const handleResize = () => {
       Graph.width(containerRef.current?.clientWidth ?? window.innerWidth);
@@ -375,38 +383,18 @@ const NetworkGraph = () => {
       if (tooltipRef.current) {
         document.body.removeChild(tooltipRef.current);
       }
+      if (resetButton) {
+        resetButton.removeEventListener('click', () => {
+          Graph.cameraPosition({ x: 0, y: 0, z: 200 }, { x: 0, y: 0, z: 0 }, 1000);
+        });
+      }
       Graph._destructor();
     };
   }, []); // Эффект запускается только при монтировании
 
-  const handleZoomIn = () => {
-    if (graphRef.current) {
-      const currentDistance = graphRef.current.camera().position.z;
-      graphRef.current.cameraPosition({ z: currentDistance * 0.8 });
-    }
-  };
-
-  const handleZoomOut = () => {
-    if (graphRef.current) {
-      const currentDistance = graphRef.current.camera().position.z;
-      graphRef.current.cameraPosition({ z: currentDistance * 1.2 });
-    }
-  };
-
-  const handleReset = () => {
-    if (graphRef.current) {
-      graphRef.current.cameraPosition({ x: 0, y: 0, z: 200 }, { x: 0, y: 0, z: 0 }, 1000);
-    }
-  };
-
   return (
     <div className="relative w-full h-screen">
       <div ref={containerRef} className="w-full h-full" />
-      <GraphControls
-        onZoomIn={handleZoomIn}
-        onZoomOut={handleZoomOut}
-        onReset={handleReset}
-      />
     </div>
   );
 };

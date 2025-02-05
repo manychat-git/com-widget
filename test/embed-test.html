@@ -112,6 +112,29 @@
         </div>
     </div>
 
+    <!-- Reset button -->
+    <button 
+        data-w-reset="active" 
+        style="
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: none;
+            cursor: pointer;
+            font-family: 'CoFo Sans Mono', monospace;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        "
+        onmouseover="this.style.transform='scale(1.05)'"
+        onmouseout="this.style.transform='scale(1)'"
+    >
+        Reset View
+    </button>
+
     <!-- Widget script -->
     <script src="/dist/widget.js"></script>
     <script>
