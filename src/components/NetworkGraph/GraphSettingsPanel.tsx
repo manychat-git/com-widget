@@ -73,44 +73,44 @@ const GraphSettingsPanel: React.FC<GraphSettingsPanelProps> = ({ settings, onSet
   };
 
   return (
-    <div className="fixed top-4 left-4 w-80 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg p-4 max-h-[80vh] overflow-y-auto">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Link Connections</h2>
+    <div className="com-fixed com-top-4 com-left-4 com-w-80 com-bg-white/90 com-backdrop-blur-sm com-rounded-lg com-shadow-lg com-p-4 com-max-h-[80vh] com-overflow-y-auto">
+      <div className="com-flex com-justify-between com-items-center com-mb-4">
+        <h2 className="com-text-lg com-font-semibold">Link Connections</h2>
         <button
           onClick={handleReset}
-          className="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+          className="com-px-3 com-py-1 com-text-sm com-text-gray-600 hover:com-text-gray-900 com-border com-border-gray-300 com-rounded-md hover:com-bg-gray-50 com-transition-colors"
         >
           Reset
         </button>
       </div>
       
       {/* Type Links */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-2">
+      <div className="com-mb-6">
+        <div className="com-flex com-items-center com-justify-between com-mb-2">
           <div>
-            <h3 className="font-medium">Content Type</h3>
-            <p className="text-sm text-gray-500">Link by content (articles, videos, etc)</p>
+            <h3 className="com-font-medium">Content Type</h3>
+            <p className="com-text-sm com-text-gray-500">Link by content (articles, videos, etc)</p>
           </div>
           <Switch
             checked={settings.type.enabled}
             onChange={(checked) => handleSettingChange('type', 'enabled', checked)}
             className={`${
-              settings.type.enabled ? 'bg-green-500' : 'bg-gray-200'
-            } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none`}
+              settings.type.enabled ? 'com-bg-green-500' : 'com-bg-gray-200'
+            } com-relative com-inline-flex com-h-6 com-w-11 com-items-center com-rounded-full com-transition-colors focus:com-outline-none`}
           >
             <span
               className={`${
-                settings.type.enabled ? 'translate-x-6' : 'translate-x-1'
-              } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                settings.type.enabled ? 'com-translate-x-6' : 'com-translate-x-1'
+              } com-inline-block com-h-4 com-w-4 com-transform com-rounded-full com-bg-white com-transition-transform`}
             />
           </Switch>
         </div>
         
-        <div className="space-y-2">
+        <div className="com-space-y-2">
           <div>
-            <div className="flex justify-between mb-0.5">
-              <span className="text-sm">Strength</span>
-              <span className="text-sm text-gray-500">{settings.type.strength.toFixed(1)}</span>
+            <div className="com-flex com-justify-between com-mb-0.5">
+              <span className="com-text-sm">Strength</span>
+              <span className="com-text-sm com-text-gray-500">{settings.type.strength.toFixed(1)}</span>
             </div>
             <Slider
               disabled={!settings.type.enabled}
@@ -124,9 +124,9 @@ const GraphSettingsPanel: React.FC<GraphSettingsPanelProps> = ({ settings, onSet
           </div>
           
           <div>
-            <div className="flex justify-between mb-0.5">
-              <span className="text-sm">Distance</span>
-              <span className="text-sm text-gray-500">{settings.type.distance}</span>
+            <div className="com-flex com-justify-between com-mb-0.5">
+              <span className="com-text-sm">Distance</span>
+              <span className="com-text-sm com-text-gray-500">{settings.type.distance}</span>
             </div>
             <Slider
               disabled={!settings.type.enabled}
@@ -142,32 +142,32 @@ const GraphSettingsPanel: React.FC<GraphSettingsPanelProps> = ({ settings, onSet
       </div>
 
       {/* Author Links */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-2">
+      <div className="com-mb-6">
+        <div className="com-flex com-items-center com-justify-between com-mb-2">
           <div>
-            <h3 className="font-medium">Author</h3>
-            <p className="text-sm text-gray-500">Link by same author</p>
+            <h3 className="com-font-medium">Author</h3>
+            <p className="com-text-sm com-text-gray-500">Link by same author</p>
           </div>
           <Switch
             checked={settings.author.enabled}
             onChange={(checked) => handleSettingChange('author', 'enabled', checked)}
             className={`${
-              settings.author.enabled ? 'bg-green-500' : 'bg-gray-200'
-            } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none`}
+              settings.author.enabled ? 'com-bg-green-500' : 'com-bg-gray-200'
+            } com-relative com-inline-flex com-h-6 com-w-11 com-items-center com-rounded-full com-transition-colors focus:com-outline-none`}
           >
             <span
               className={`${
-                settings.author.enabled ? 'translate-x-6' : 'translate-x-1'
-              } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                settings.author.enabled ? 'com-translate-x-6' : 'com-translate-x-1'
+              } com-inline-block com-h-4 com-w-4 com-transform com-rounded-full com-bg-white com-transition-transform`}
             />
           </Switch>
         </div>
         
-        <div className="space-y-2">
+        <div className="com-space-y-2">
           <div>
-            <div className="flex justify-between mb-0.5">
-              <span className="text-sm">Strength</span>
-              <span className="text-sm text-gray-500">{settings.author.strength.toFixed(1)}</span>
+            <div className="com-flex com-justify-between com-mb-0.5">
+              <span className="com-text-sm">Strength</span>
+              <span className="com-text-sm com-text-gray-500">{settings.author.strength.toFixed(1)}</span>
             </div>
             <Slider
               disabled={!settings.author.enabled}
@@ -181,9 +181,9 @@ const GraphSettingsPanel: React.FC<GraphSettingsPanelProps> = ({ settings, onSet
           </div>
           
           <div>
-            <div className="flex justify-between mb-0.5">
-              <span className="text-sm">Distance</span>
-              <span className="text-sm text-gray-500">{settings.author.distance}</span>
+            <div className="com-flex com-justify-between com-mb-0.5">
+              <span className="com-text-sm">Distance</span>
+              <span className="com-text-sm com-text-gray-500">{settings.author.distance}</span>
             </div>
             <Slider
               disabled={!settings.author.enabled}
@@ -199,32 +199,32 @@ const GraphSettingsPanel: React.FC<GraphSettingsPanelProps> = ({ settings, onSet
       </div>
 
       {/* Issue Links */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-2">
+      <div className="com-mb-6">
+        <div className="com-flex com-items-center com-justify-between com-mb-2">
           <div>
-            <h3 className="font-medium">Issue</h3>
-            <p className="text-sm text-gray-500">Link by same issue</p>
+            <h3 className="com-font-medium">Issue</h3>
+            <p className="com-text-sm com-text-gray-500">Link by same issue</p>
           </div>
           <Switch
             checked={settings.issue.enabled}
             onChange={(checked) => handleSettingChange('issue', 'enabled', checked)}
             className={`${
-              settings.issue.enabled ? 'bg-green-500' : 'bg-gray-200'
-            } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none`}
+              settings.issue.enabled ? 'com-bg-green-500' : 'com-bg-gray-200'
+            } com-relative com-inline-flex com-h-6 com-w-11 com-items-center com-rounded-full com-transition-colors focus:com-outline-none`}
           >
             <span
               className={`${
-                settings.issue.enabled ? 'translate-x-6' : 'translate-x-1'
-              } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                settings.issue.enabled ? 'com-translate-x-6' : 'com-translate-x-1'
+              } com-inline-block com-h-4 com-w-4 com-transform com-rounded-full com-bg-white com-transition-transform`}
             />
           </Switch>
         </div>
         
-        <div className="space-y-2">
+        <div className="com-space-y-2">
           <div>
-            <div className="flex justify-between mb-0.5">
-              <span className="text-sm">Strength</span>
-              <span className="text-sm text-gray-500">{settings.issue.strength.toFixed(1)}</span>
+            <div className="com-flex com-justify-between com-mb-0.5">
+              <span className="com-text-sm">Strength</span>
+              <span className="com-text-sm com-text-gray-500">{settings.issue.strength.toFixed(1)}</span>
             </div>
             <Slider
               disabled={!settings.issue.enabled}
@@ -238,9 +238,9 @@ const GraphSettingsPanel: React.FC<GraphSettingsPanelProps> = ({ settings, onSet
           </div>
           
           <div>
-            <div className="flex justify-between mb-0.5">
-              <span className="text-sm">Distance</span>
-              <span className="text-sm text-gray-500">{settings.issue.distance}</span>
+            <div className="com-flex com-justify-between com-mb-0.5">
+              <span className="com-text-sm">Distance</span>
+              <span className="com-text-sm com-text-gray-500">{settings.issue.distance}</span>
             </div>
             <Slider
               disabled={!settings.issue.enabled}
@@ -256,18 +256,18 @@ const GraphSettingsPanel: React.FC<GraphSettingsPanelProps> = ({ settings, onSet
       </div>
 
       {/* Visual Settings */}
-      <Separator className="my-6" />
-      <div className="mb-6">
-        <div className="mb-4">
-          <h3 className="font-medium">Visual Settings</h3>
-          <p className="text-sm text-gray-500">Customize link appearance</p>
+      <Separator className="com-my-6" />
+      <div className="com-mb-6">
+        <div className="com-mb-4">
+          <h3 className="com-font-medium">Visual Settings</h3>
+          <p className="com-text-sm com-text-gray-500">Customize link appearance</p>
         </div>
         
-        <div className="space-y-4">
+        <div className="com-space-y-4">
           <div>
-            <div className="flex justify-between mb-0.5">
-              <span className="text-sm">Line Width</span>
-              <span className="text-sm text-gray-500">{settings.visual.width.toFixed(1)}</span>
+            <div className="com-flex com-justify-between com-mb-0.5">
+              <span className="com-text-sm">Line Width</span>
+              <span className="com-text-sm com-text-gray-500">{settings.visual.width.toFixed(1)}</span>
             </div>
             <Slider
               value={settings.visual.width}
@@ -280,9 +280,9 @@ const GraphSettingsPanel: React.FC<GraphSettingsPanelProps> = ({ settings, onSet
           </div>
 
           <div>
-            <div className="flex justify-between mb-0.5">
-              <span className="text-sm">Line Opacity</span>
-              <span className="text-sm text-gray-500">{settings.visual.opacity.toFixed(1)}</span>
+            <div className="com-flex com-justify-between com-mb-0.5">
+              <span className="com-text-sm">Line Opacity</span>
+              <span className="com-text-sm com-text-gray-500">{settings.visual.opacity.toFixed(1)}</span>
             </div>
             <Slider
               value={settings.visual.opacity}
@@ -295,13 +295,13 @@ const GraphSettingsPanel: React.FC<GraphSettingsPanelProps> = ({ settings, onSet
           </div>
 
           <div>
-            <div className="flex justify-between mb-0.5">
-              <span className="text-sm">Line Color</span>
+            <div className="com-flex com-justify-between com-mb-0.5">
+              <span className="com-text-sm">Line Color</span>
               <input
                 type="color"
                 value={settings.visual.color}
                 onChange={(e) => handleVisualChange('color', e.target.value)}
-                className="w-8 h-8 rounded cursor-pointer"
+                className="com-w-8 com-h-8 com-rounded com-cursor-pointer"
               />
             </div>
           </div>
@@ -309,18 +309,18 @@ const GraphSettingsPanel: React.FC<GraphSettingsPanelProps> = ({ settings, onSet
       </div>
 
       {/* Physics Settings */}
-      <Separator className="my-6" />
-      <div className="mb-6">
-        <div className="mb-4">
-          <h3 className="font-medium">Repulsion</h3>
-          <p className="text-sm text-gray-500">Node repulsion force settings</p>
+      <Separator className="com-my-6" />
+      <div className="com-mb-6">
+        <div className="com-mb-4">
+          <h3 className="com-font-medium">Repulsion</h3>
+          <p className="com-text-sm com-text-gray-500">Node repulsion force settings</p>
         </div>
         
-        <div className="space-y-4">
+        <div className="com-space-y-4">
           <div>
-            <div className="flex justify-between mb-0.5">
-              <span className="text-sm">Strength</span>
-              <span className="text-sm text-gray-500">{settings.physics.repulsion.strength}</span>
+            <div className="com-flex com-justify-between com-mb-0.5">
+              <span className="com-text-sm">Strength</span>
+              <span className="com-text-sm com-text-gray-500">{settings.physics.repulsion.strength}</span>
             </div>
             <Slider
               value={settings.physics.repulsion.strength}
@@ -333,9 +333,9 @@ const GraphSettingsPanel: React.FC<GraphSettingsPanelProps> = ({ settings, onSet
           </div>
           
           <div>
-            <div className="flex justify-between mb-0.5">
-              <span className="text-sm">Max Distance</span>
-              <span className="text-sm text-gray-500">{settings.physics.repulsion.maxDistance}</span>
+            <div className="com-flex com-justify-between com-mb-0.5">
+              <span className="com-text-sm">Max Distance</span>
+              <span className="com-text-sm com-text-gray-500">{settings.physics.repulsion.maxDistance}</span>
             </div>
             <Slider
               value={settings.physics.repulsion.maxDistance}
@@ -349,17 +349,17 @@ const GraphSettingsPanel: React.FC<GraphSettingsPanelProps> = ({ settings, onSet
         </div>
       </div>
 
-      <div className="mb-6">
-        <div className="mb-4">
-          <h3 className="font-medium">Collision</h3>
-          <p className="text-sm text-gray-500">Node collision settings</p>
+      <div className="com-mb-6">
+        <div className="com-mb-4">
+          <h3 className="com-font-medium">Collision</h3>
+          <p className="com-text-sm com-text-gray-500">Node collision settings</p>
         </div>
         
-        <div className="space-y-4">
+        <div className="com-space-y-4">
           <div>
-            <div className="flex justify-between mb-0.5">
-              <span className="text-sm">Radius</span>
-              <span className="text-sm text-gray-500">{settings.physics.collision.radius}</span>
+            <div className="com-flex com-justify-between com-mb-0.5">
+              <span className="com-text-sm">Radius</span>
+              <span className="com-text-sm com-text-gray-500">{settings.physics.collision.radius}</span>
             </div>
             <Slider
               value={settings.physics.collision.radius}
@@ -372,9 +372,9 @@ const GraphSettingsPanel: React.FC<GraphSettingsPanelProps> = ({ settings, onSet
           </div>
           
           <div>
-            <div className="flex justify-between mb-0.5">
-              <span className="text-sm">Strength</span>
-              <span className="text-sm text-gray-500">{settings.physics.collision.strength.toFixed(1)}</span>
+            <div className="com-flex com-justify-between com-mb-0.5">
+              <span className="com-text-sm">Strength</span>
+              <span className="com-text-sm com-text-gray-500">{settings.physics.collision.strength.toFixed(1)}</span>
             </div>
             <Slider
               value={settings.physics.collision.strength}
@@ -388,23 +388,23 @@ const GraphSettingsPanel: React.FC<GraphSettingsPanelProps> = ({ settings, onSet
         </div>
       </div>
 
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-2">
+      <div className="com-mb-6">
+        <div className="com-flex com-items-center com-justify-between com-mb-2">
           <div>
-            <h3 className="font-medium">Center Gravity</h3>
-            <p className="text-sm text-gray-500">Pull nodes to center</p>
+            <h3 className="com-font-medium">Center Gravity</h3>
+            <p className="com-text-sm com-text-gray-500">Pull nodes to center</p>
           </div>
           <Switch
             checked={settings.physics.centerForce}
             onChange={handleCenterForceChange}
             className={`${
-              settings.physics.centerForce ? 'bg-green-500' : 'bg-gray-200'
-            } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none`}
+              settings.physics.centerForce ? 'com-bg-green-500' : 'com-bg-gray-200'
+            } com-relative com-inline-flex com-h-6 com-w-11 com-items-center com-rounded-full com-transition-colors focus:com-outline-none`}
           >
             <span
               className={`${
-                settings.physics.centerForce ? 'translate-x-6' : 'translate-x-1'
-              } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                settings.physics.centerForce ? 'com-translate-x-6' : 'com-translate-x-1'
+              } com-inline-block com-h-4 com-w-4 com-transform com-rounded-full com-bg-white com-transition-transform`}
             />
           </Switch>
         </div>

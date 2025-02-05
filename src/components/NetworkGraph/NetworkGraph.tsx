@@ -1,9 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import ForceGraph3D from '3d-force-graph';
 import { newData } from './newData';
-import InfoPanel from './InfoPanel';
 import GraphControls from './GraphControls';
-import GraphSettingsPanel from './GraphSettingsPanel';
 import { Node } from './types';
 import * as THREE from 'three';
 import * as d3 from 'd3';
@@ -221,6 +219,32 @@ const NetworkGraph = () => {
       })
       .onNodeClick((node: any) => {
         setSelectedNode(node);
+        
+        // Find popup elements
+        const popup = document.querySelector('[data-w-popup]');
+        const image = document.querySelector('[data-w-image]');
+        const author = document.querySelector('[data-w-author]');
+        const title = document.querySelector('[data-w-title]');
+        const description = document.querySelector('[data-w-description]');
+        const closeBtn = document.querySelector('[data-w-close]');
+        
+        // Fill popup with data
+        if (image) (image as HTMLImageElement).src = node.imageUrl;
+        if (author) author.textContent = node.author ? node.author.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : '';
+        if (title) title.textContent = node.title;
+        if (description) description.textContent = node.descriptor || '';
+        
+        // Show popup
+        if (popup) popup.style.display = 'flex';
+        
+        // Add close handler
+        if (closeBtn) {
+          closeBtn.addEventListener('click', () => {
+            if (popup) popup.style.display = 'none';
+            setSelectedNode(null);
+          });
+        }
+
         // Aim at node from outside
         const distance = 40;
         const distRatio = 1 + distance/Math.hypot(node.x, node.y, node.z);
@@ -322,21 +346,11 @@ const NetworkGraph = () => {
   return (
     <div className="relative w-full h-screen">
       <div ref={containerRef} className="w-full h-full" />
-      <GraphSettingsPanel 
-        settings={settings}
-        onSettingsChange={handleSettingsChange} 
-      />
       <GraphControls
         onZoomIn={handleZoomIn}
         onZoomOut={handleZoomOut}
         onReset={handleReset}
       />
-      {selectedNode && (
-        <InfoPanel
-          selectedNode={selectedNode}
-          onClose={() => setSelectedNode(null)}
-        />
-      )}
     </div>
   );
 };

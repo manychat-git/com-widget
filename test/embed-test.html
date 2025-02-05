@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Graph Embed Test</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/manychat-git/com-widget@8b2138ea/dist/widget.css">
+    <link rel="stylesheet" href="/dist/widget.css">
     <style>
         /* Reset page styles */
         html, body {
@@ -31,13 +31,52 @@
         .com-widget-root * {
             all: revert;
         }
+
+        /* Test popup styles */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 1000;
+        }
+        .popup img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .popup .close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            font-size: 24px;
+        }
     </style>
 </head>
 <body>
     <!-- Widget container -->
     <div id="root"></div>
+
+    <!-- Test popup -->
+    <div class="popup" data-w-popup>
+        <span class="close" data-w-close>&times;</span>
+        <img data-w-image src="" alt="Content image">
+        <h2 data-w-title></h2>
+        <p class="author" data-w-author></p>
+        <p class="description" data-w-description></p>
+    </div>
+
     <!-- Widget script -->
-    <script src="https://cdn.jsdelivr.net/gh/manychat-git/com-widget@8b2138ea/dist/widget.js"></script>
+    <script src="/dist/widget.js"></script>
     <script>
         // Проверяем инициализацию
         if (window.ComWidget) {
