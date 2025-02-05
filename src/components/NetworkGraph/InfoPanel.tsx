@@ -1,5 +1,4 @@
 import { Node } from './types';
-import '@/styles/fonts.css';
 
 // Функция для форматирования имени автора
 const formatAuthorName = (author: string): string => {

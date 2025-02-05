@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph Embed Test</title>
+    <link rel="stylesheet" href="../dist/widget.css">
+    <style>
+        /* Reset page styles */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+        /* Widget container */
+        #root {
+            width: 100%;
+            height: 100vh;
+            background: transparent;
+            isolation: isolate;
+            contain: content;
+            position: relative;
+        }
+        /* Изолируем стили виджета */
+        .com-widget-root {
+            all: initial;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        .com-widget-root * {
+            all: revert;
+        }
+    </style>
+</head>
+<body>
+    <!-- Widget container -->
+    <div id="root"></div>
+    <!-- Widget script -->
+    <script src="../dist/widget.js"></script>
+    <script>
+        // Проверяем инициализацию
+        if (window.ComWidget) {
+            const widget = window.ComWidget.init('root');
+            console.log('Widget initialized:', widget);
+        } else {
+            console.error('Widget not loaded properly');
+        }
+    </script>
+</body>
+</html> 

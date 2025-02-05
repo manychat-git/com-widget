@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Reset для виджета */
+.com-widget-root {
+  all: initial;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.com-widget-root * {
+  all: revert;
+}
+
+/* Base styles */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background: transparent;
+}
+
+/* Font declaration */
+@font-face {
+  font-family: 'CoFo Sans Mono';
+  src: url('./assets/fonts/CoFoSansMono-Regular.otf') format('opentype'),
+       url('./assets/fonts/CoFoSansMono-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+.cofo-sans-mono {
+  font-family: 'CoFo Sans Mono', monospace;
+}
+
+/* Tooltip styles */
+.tooltip {
+  position: fixed;
+  background: #0057FF;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 14px;
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+  z-index: 1000;
+  white-space: nowrap;
+  @apply cofo-sans-mono;
+} 

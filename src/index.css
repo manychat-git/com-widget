@@ -45,19 +45,12 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -110,7 +103,12 @@
   }
 }
 
-/* Override default tooltip styles */
+/* Utility classes */
+.cofo-sans-mono {
+  font-family: 'CoFo Sans Mono', monospace;
+}
+
+/* Tooltip styles */
 .tooltip {
   position: fixed;
   background: #0057FF;
@@ -118,12 +116,12 @@
   padding: 2px 6px;
   border-radius: 4px;
   font-weight: 500;
-  font-family: 'CoFo Sans Mono', monospace;
   font-size: 14px;
   pointer-events: none;
   transform: translate(-50%, -100%);
   z-index: 1000;
   white-space: nowrap;
+  @apply cofo-sans-mono;
 }
 
 /* Remove unused styles */
