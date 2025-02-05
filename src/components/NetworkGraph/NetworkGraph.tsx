@@ -3,7 +3,6 @@ import ForceGraph3D from '3d-force-graph';
 import { newData } from './newData';
 import InfoPanel from './InfoPanel';
 import GraphControls from './GraphControls';
-import GraphSettingsPanel from './GraphSettingsPanel';
 import { Node } from './types';
 import * as THREE from 'three';
 import * as d3 from 'd3';
@@ -322,10 +321,6 @@ const NetworkGraph = () => {
   return (
     <div className="relative w-full h-screen">
       <div ref={containerRef} className="w-full h-full" />
-      <GraphSettingsPanel 
-        settings={settings}
-        onSettingsChange={handleSettingsChange} 
-      />
       <GraphControls
         onZoomIn={handleZoomIn}
         onZoomOut={handleZoomOut}

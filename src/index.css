@@ -93,14 +93,8 @@
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-transparent text-foreground;
-  }
+body {
+  @apply bg-transparent text-foreground;
 }
 
 /* Utility classes */

@@ -6,24 +6,24 @@ interface GraphControlsProps {
 
 const GraphControls = ({ onZoomIn, onZoomOut, onReset }: GraphControlsProps) => {
   return (
-    <div className="absolute bottom-6 left-6 flex gap-2">
+    <div className="com-absolute com-bottom-6 com-left-6 com-flex com-gap-2">
       <button
         onClick={onZoomIn}
-        className="bg-white/90 backdrop-blur-sm p-2 rounded-lg shadow-md hover:bg-white transition-colors"
+        className="com-bg-white/90 com-backdrop-blur-sm com-p-2 com-rounded-lg com-shadow-md hover:com-bg-white com-transition-colors"
         aria-label="Zoom in"
       >
         +
       </button>
       <button
         onClick={onZoomOut}
-        className="bg-white/90 backdrop-blur-sm p-2 rounded-lg shadow-md hover:bg-white transition-colors"
+        className="com-bg-white/90 com-backdrop-blur-sm com-p-2 com-rounded-lg com-shadow-md hover:com-bg-white com-transition-colors"
         aria-label="Zoom out"
       >
         -
       </button>
       <button
         onClick={onReset}
-        className="bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg shadow-md hover:bg-white transition-colors"
+        className="com-bg-white/90 com-backdrop-blur-sm com-px-3 com-py-2 com-rounded-lg com-shadow-md hover:com-bg-white com-transition-colors"
       >
         Reset
       </button>

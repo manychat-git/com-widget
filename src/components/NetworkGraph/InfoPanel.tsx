@@ -20,22 +20,22 @@ const InfoPanel = ({ selectedNode, onClose }: InfoPanelProps) => {
   const tags = selectedNode.tags ? selectedNode.tags.split(';').map(tag => tag.trim()) : [];
 
   return (
-    <div className="fixed right-0 top-0 h-full w-80 bg-white/90 backdrop-blur-sm shadow-lg p-6 transform transition-transform duration-300 ease-in-out overflow-y-auto">
+    <div className="com-fixed com-right-0 com-top-0 com-h-full com-w-80 com-bg-white/90 com-backdrop-blur-sm com-shadow-lg com-p-6 com-transform com-transition-transform com-duration-300 com-ease-in-out com-overflow-y-auto">
       <button
         onClick={onClose}
-        className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl"
+        className="com-absolute com-top-4 com-right-4 com-text-gray-500 hover:com-text-gray-700 com-text-xl"
       >
         ×
       </button>
       
-      <div className="mt-8 space-y-4">
+      <div className="com-mt-8 com-space-y-4">
         {/* Теги и тип контента */}
-        <div className="flex flex-wrap gap-2">
+        <div className="com-flex com-flex-wrap com-gap-2">
           {/* Тип контента */}
-          <span className={`inline-block px-2 py-1 rounded-sm text-xs text-white font-medium cofo-sans-mono
-            ${selectedNode.type === 'article' ? 'bg-[#0057FF]' : ''}
-            ${selectedNode.type === 'youtube_video' ? 'bg-[#FD00FD]' : ''}
-            ${selectedNode.type === 'special_project' ? 'bg-[#FF4B00]' : ''}
+          <span className={`com-inline-block com-px-2 com-py-1 com-rounded-sm com-text-xs com-text-white com-font-medium cofo-sans-mono
+            ${selectedNode.type === 'article' ? 'com-bg-[#0057FF]' : ''}
+            ${selectedNode.type === 'youtube_video' ? 'com-bg-[#FD00FD]' : ''}
+            ${selectedNode.type === 'special_project' ? 'com-bg-[#FF4B00]' : ''}
           `}>
             {selectedNode.type.toUpperCase()}
           </span>
@@ -44,7 +44,7 @@ const InfoPanel = ({ selectedNode, onClose }: InfoPanelProps) => {
           {tags.length > 0 && tags.map((tag, index) => (
             <span
               key={index}
-              className="inline-block px-2 py-1 bg-gray-800 text-white rounded-sm text-xs font-medium cofo-sans-mono"
+              className="com-inline-block com-px-2 com-py-1 com-bg-gray-800 com-text-white com-rounded-sm com-text-xs com-font-medium cofo-sans-mono"
             >
               {tag.toUpperCase()}
             </span>
@@ -56,30 +56,30 @@ const InfoPanel = ({ selectedNode, onClose }: InfoPanelProps) => {
           <img 
             src={selectedNode.imageUrl} 
             alt={selectedNode.title}
-            className="rounded-lg shadow-sm w-full object-cover aspect-video mb-4"
+            className="com-rounded-lg com-shadow-sm com-w-full com-object-cover com-aspect-video com-mb-4"
           />
         )}
 
         {/* Заголовок */}
-        <h2 className="text-xl font-semibold">{selectedNode.title}</h2>
+        <h2 className="com-text-xl com-font-semibold">{selectedNode.title}</h2>
         
         {/* Дескриптор */}
         {selectedNode.descriptor && (
-          <div className="text-sm text-gray-500 cofo-sans-mono">
+          <div className="com-text-sm com-text-gray-500 cofo-sans-mono">
             {selectedNode.descriptor}
           </div>
         )}
 
         {/* Автор */}
         {selectedNode.author && (
-          <div className="text-sm text-gray-600">
-            by <span className="font-medium">{formatAuthorName(selectedNode.author)}</span>
+          <div className="com-text-sm com-text-gray-600">
+            by <span className="com-font-medium">{formatAuthorName(selectedNode.author)}</span>
           </div>
         )}
         
         {/* Описание */}
         {selectedNode.description && (
-          <p className="text-gray-600 text-sm leading-relaxed">
+          <p className="com-text-gray-600 com-text-sm com-leading-relaxed">
             {selectedNode.description}
           </p>
         )}

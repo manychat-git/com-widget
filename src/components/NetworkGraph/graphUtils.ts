@@ -4,35 +4,35 @@ import { Node } from './types';
 export const DEFAULT_LINK_SETTINGS: LinkSettings = {
   // Настройки связей
   type: {
-    enabled: true,
+    enabled: false,
     strength: 0.1,
     distance: 100
   },
   author: {
     enabled: true,
-    strength: 0.1,
-    distance: 200
+    strength: 0.2,
+    distance: 40
   },
   issue: {
     enabled: true,
-    strength: 1,
-    distance: 30
+    strength: 1.0,
+    distance: 20
   },
   // Визуальные настройки
   visual: {
     width: 0.1,
-    opacity: 0.4,
+    opacity: 0.0,
     color: '#D7D7D7'
   },
   // Физические параметры
   physics: {
     repulsion: {
-      strength: -500,
-      maxDistance: 200
+      strength: -400,
+      maxDistance: 220
     },
     collision: {
       radius: 1,
-      strength: 0.7
+      strength: 0.6
     },
     centerForce: true
   }
