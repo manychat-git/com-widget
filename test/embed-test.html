@@ -39,7 +39,7 @@
             bottom: 0;
             right: 0;
             width: 400px;
-            height: 100vh;
+            height: 50vh;
             background: white;
             box-shadow: -2px 0 10px rgba(0,0,0,0.1);
             padding: 20px;
@@ -47,7 +47,40 @@
             gap: 20px;
             z-index: 1000;
             transform: translateY(100%);
+            border-radius: 16px 16px 0 0;
         }
+        
+        /* Handle styles */
+        .popup-handle {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            padding: 8px;
+        }
+        
+        .popup-handle::before {
+            content: '';
+            width: 40px;
+            height: 4px;
+            background: #E2E2E2;
+            border-radius: 2px;
+        }
+
+        .popup-content {
+            margin-top: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            height: calc(100% - 24px);
+            overflow-y: auto;
+        }
+        
         .popup img {
             width: 100%;
             height: 200px;
@@ -60,6 +93,7 @@
             right: 20px;
             cursor: pointer;
             font-size: 24px;
+            display: none; /* Скрываем крестик, так как теперь закрытие через drag */
         }
     </style>
 </head>
@@ -69,11 +103,13 @@
 
     <!-- Test popup -->
     <div class="popup" data-w-popup>
-        <span class="close" data-w-close>&times;</span>
-        <img data-w-image src="" alt="Content image">
-        <h2 data-w-title></h2>
-        <p class="author" data-w-author></p>
-        <p class="description" data-w-description></p>
+        <div class="popup-handle" data-w-handle></div>
+        <div class="popup-content">
+            <img data-w-image src="" alt="Content image">
+            <h2 data-w-title></h2>
+            <p class="author" data-w-author></p>
+            <p class="description" data-w-description></p>
+        </div>
     </div>
 
     <!-- Widget script -->

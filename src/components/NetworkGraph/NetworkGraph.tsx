@@ -6,7 +6,11 @@ import { Node } from './types';
 import * as THREE from 'three';
 import * as d3 from 'd3';
 import gsap from 'gsap';
+import { Draggable } from 'gsap/Draggable';
 import { GRAPH_PHYSICS_PARAMS, DEFAULT_LINK_SETTINGS, LinkSettings, getLinkTypes, generateLinks } from './graphUtils';
+
+// Register GSAP plugins
+gsap.registerPlugin(Draggable);
 
 const NetworkGraph = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -223,11 +227,11 @@ const NetworkGraph = () => {
         
         // Find popup elements
         const popup = document.querySelector('[data-w-popup]');
+        const handle = document.querySelector('[data-w-handle]');
         const image = document.querySelector('[data-w-image]');
         const author = document.querySelector('[data-w-author]');
         const title = document.querySelector('[data-w-title]');
         const description = document.querySelector('[data-w-description]');
-        const closeBtn = document.querySelector('[data-w-close]');
         
         // Reset content styles for animation
         const contentElements = [image, author, title, description].filter(Boolean);
@@ -261,35 +265,40 @@ const NetworkGraph = () => {
             duration: 0.3,
             ease: 'power2.out'
           });
-        }
-        
-        // Add close handler
-        if (closeBtn) {
-          closeBtn.addEventListener('click', () => {
-            if (popup) {
-              const timeline = gsap.timeline({
-                onComplete: () => {
-                  popup.style.display = 'none';
-                  setSelectedNode(null);
+
+          // Initialize draggable
+          if (handle && !Draggable.get(popup)) {
+            Draggable.create(popup, {
+              type: 'y',
+              trigger: handle,
+              bounds: {
+                minY: 0,
+                maxY: window.innerHeight
+              },
+              inertia: true,
+              onDragEnd: function() {
+                // If dragged more than 20% down, close the popup
+                if (this.y > popup.clientHeight * 0.2) {
+                  gsap.to(popup, {
+                    y: '100%',
+                    duration: 0.4,
+                    ease: 'power3.inOut',
+                    onComplete: () => {
+                      popup.style.display = 'none';
+                      setSelectedNode(null);
+                    }
+                  });
+                } else {
+                  // Return to top if not dragged enough
+                  gsap.to(popup, {
+                    y: 0,
+                    duration: 0.3,
+                    ease: 'power3.out'
+                  });
                 }
-              });
-
-              // Animate both simultaneously
-              timeline.to([image, author, title, description], {
-                autoAlpha: 0,
-                scale: 0.95,
-                filter: 'blur(10px) brightness(1.5)',
-                duration: 0.2,
-                ease: 'power2.in'
-              }, 0);
-
-              timeline.to(popup, {
-                y: '100%',
-                duration: 0.4,
-                ease: 'power3.inOut'
-              }, 0); // Start at the same time (position 0)
-            }
-          });
+              }
+            });
+          }
         }
 
         // Aim at node from outside
