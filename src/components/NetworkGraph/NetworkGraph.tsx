@@ -11,7 +11,11 @@ import { GRAPH_PHYSICS_PARAMS, DEFAULT_LINK_SETTINGS, LinkSettings, getLinkTypes
 // Register GSAP plugins
 gsap.registerPlugin(Draggable);
 
-const NetworkGraph = () => {
+interface NetworkGraphProps {
+  baseUrl: string;
+}
+
+const NetworkGraph = ({ baseUrl }: NetworkGraphProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const graphRef = useRef<any>(null);
   const tooltipRef = useRef<HTMLDivElement | null>(null);
@@ -345,8 +349,7 @@ const NetworkGraph = () => {
           articleImg.src = node.articleUrl;
         }
         if (articleLink) {
-          (articleLink as HTMLAnchorElement).href = `https://com.xyz/${node.link}`;
-          articleLink.textContent = 'Read More';
+          (articleLink as HTMLAnchorElement).href = node.link.startsWith('http') ? node.link : `${baseUrl}/${node.link.replace(/^\//, '')}`;
         }
         if (issue) issue.textContent = node.issue;
         

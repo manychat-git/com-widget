@@ -31,7 +31,7 @@ function initializeStyles(container: HTMLElement) {
 }
 
 // Функция для безопасной инициализации виджета
-function initializeWidget(containerId: string = 'root') {
+function initializeWidget(containerId: string = 'root', config: { baseUrl?: string } = {}) {
   // Проверяем, не был ли виджет уже инициализирован
   const container = document.getElementById(containerId);
   if (!container) {
@@ -49,13 +49,17 @@ function initializeWidget(containerId: string = 'root') {
     // Инициализируем стили
     const cleanupStyles = initializeStyles(container);
 
+    // Определяем baseUrl автоматически, если он не указан явно
+    const defaultBaseUrl = window.location.origin;
+    const baseUrl = config.baseUrl || defaultBaseUrl;
+
     // Создаем корень React приложения
     const root = createRoot(container);
     
     // Рендерим граф со всеми компонентами
     root.render(
       <React.StrictMode>
-        <NetworkGraph />
+        <NetworkGraph baseUrl={baseUrl} />
       </React.StrictMode>
     );
 

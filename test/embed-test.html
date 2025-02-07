@@ -212,7 +212,9 @@
     <script>
         // Проверяем инициализацию
         if (window.ComWidget) {
-            const widget = window.ComWidget.init('root');
+            const widget = window.ComWidget.init('root', {
+                baseUrl: 'https://com.manychat.com'
+            });
             console.log('Widget initialized:', widget);
         } else {
             console.error('Widget not loaded properly');
