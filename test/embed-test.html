@@ -32,8 +32,8 @@
             all: revert;
         }
 
-        /* Test popup styles */
-        .popup {
+        /* Updated popup styles using data attributes */
+        [data-w-popup] {
             display: none;
             position: fixed;
             bottom: 0;
@@ -49,9 +49,8 @@
             transform: translateY(100%);
             border-radius: 16px 16px 0 0;
         }
-        
-        /* Handle styles */
-        .popup-handle {
+
+        [data-w-handle] {
             position: absolute;
             top: 0;
             left: 0;
@@ -63,8 +62,8 @@
             cursor: grab;
             padding: 8px;
         }
-        
-        .popup-handle::before {
+
+        [data-w-handle]::before {
             content: '';
             width: 40px;
             height: 4px;
@@ -80,13 +79,78 @@
             height: calc(100% - 24px);
             overflow-y: auto;
         }
-        
-        .popup img {
+
+        [data-w-image] {
             width: 100%;
             height: 200px;
             object-fit: cover;
             border-radius: 8px;
+            background-color: #f0f0f0;
         }
+
+        [data-w-author-section] {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        [data-w-author-image] {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: #f0f0f0;
+            flex-shrink: 0;
+        }
+
+        [data-w-author-info] {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        [data-w-author] {
+            margin: 0;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        [data-w-issue] {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        [data-w-article-photo] {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 8px;
+            background-color: #f0f0f0;
+            margin: 16px 0;
+        }
+
+        [data-w-article-link] {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #000;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+            transition: opacity 0.2s ease;
+        }
+
+        [data-w-article-link]:hover {
+            opacity: 0.8;
+        }
+
         .popup .close {
             position: absolute;
             top: 20px;
@@ -105,10 +169,18 @@
     <div class="popup" data-w-popup>
         <div class="popup-handle" data-w-handle></div>
         <div class="popup-content">
-            <img data-w-image src="" alt="Content image">
+            <img data-w-image src="" alt="Content image" data-w-type="main">
+            <div data-w-author-section>
+                <img data-w-author-image src="" alt="Author">
+                <div data-w-author-info>
+                    <p data-w-author></p>
+                    <p data-w-issue></p>
+                </div>
+            </div>
             <h2 data-w-title></h2>
-            <p class="author" data-w-author></p>
-            <p class="description" data-w-description></p>
+            <p data-w-description></p>
+            <img data-w-article-photo src="" alt="Article photo">
+            <a data-w-article-link href="" target="_blank">Read More</a>
         </div>
     </div>
 

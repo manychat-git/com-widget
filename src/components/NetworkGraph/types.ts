@@ -7,9 +7,12 @@ export interface Node {
   description?: string;
   descriptor?: string;
   imageUrl?: string;
+  articleUrl?: string;
   author?: string;
+  authorImage?: string;
   tags?: string;
   issue?: string;
+  link?: string;
   x?: number;
   y?: number;
   z?: number;
