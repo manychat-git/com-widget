@@ -40,12 +40,14 @@
 /* Tooltip styles */
 .tooltip {
   position: fixed;
-  background: #0057FF;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: white;
-  padding: 2px 6px;
+  padding: 2px 8px;
   border-radius: 4px;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 12px;
   pointer-events: none;
   transform: translate(-50%, -100%);
   z-index: 1000;

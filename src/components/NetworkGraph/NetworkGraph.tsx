@@ -284,14 +284,33 @@ const NetworkGraph = ({ baseUrl }: NetworkGraphProps) => {
         setSelectedNode(node);
         stopRotation(); // Останавливаем вращение
 
-        // Aim at node from outside
-        const distance = 40;
+        const distance = 90;
         const distRatio = 1 + distance/Math.hypot(node.x, node.y, node.z);
+        const currentPos = graphRef.current.cameraPosition();
+        
+        // Сначала отодвигаем камеру назад для более плавного движения
         graphRef.current.cameraPosition(
-          { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio },
-          node,
-          3000
+          { 
+            x: currentPos.x * 1.2,
+            y: currentPos.y * 1.2,
+            z: currentPos.z * 1.2
+          },
+          currentPos, // сохраняем текущую точку обзора
+          800  // быстрое отдаление
         );
+
+        // Затем делаем плавный облет к нужной позиции
+        setTimeout(() => {
+          graphRef.current.cameraPosition(
+            { 
+              x: node.x * distRatio, 
+              y: node.y * distRatio, 
+              z: node.z * distRatio 
+            },
+            node, // lookAt ({ x, y, z })
+            2500  // увеличенное время для плавности
+          );
+        }, 800); // Запускаем после завершения первой анимации
 
         // Find popup elements
         const popup = document.querySelector('[data-w-popup]');
@@ -426,40 +445,87 @@ const NetworkGraph = ({ baseUrl }: NetworkGraphProps) => {
             });
           }
         }
+
+        // Add reset button handler
+        const resetButton = document.querySelector('[data-w-reset]');
+        if (resetButton) {
+          resetButton.addEventListener('click', () => {
+            // Закрываем попап если он открыт
+            const popup = document.querySelector('[data-w-popup]');
+            if (popup && getComputedStyle(popup).display !== 'none') {
+              gsap.to(popup, {
+                y: '100%',
+                duration: 0.4,
+                ease: 'power3.inOut',
+                onComplete: () => {
+                  popup.style.display = 'none';
+                  setSelectedNode(null);
+                }
+              });
+            }
+
+            // Останавливаем вращение и возвращаем камеру в начальное положение
+            stopRotation();
+            Graph.cameraPosition(
+              { x: 0, y: 0, z: 200 }, // начальная позиция камеры
+              { x: 0, y: 0, z: 0 },   // смотрим в центр
+              1000                    // длительность анимации
+            );
+
+            // Запускаем вращение через 1 секунду (после завершения анимации камеры)
+            setTimeout(startRotation, 1000);
+          });
+        }
       })
       .onNodeHover((node: any) => {
         if (tooltipRef.current) {
           if (node) {
             const screenPos = Graph.graph2ScreenCoords(node.x, node.y, node.z);
             tooltipRef.current.style.display = 'block';
-            tooltipRef.current.style.left = `${screenPos.x}px`;
-            tooltipRef.current.style.top = `${screenPos.y - 10}px`;
+
+            // Magnetic tooltip animation
+            gsap.to(tooltipRef.current, {
+              left: `${screenPos.x}px`,
+              top: `${screenPos.y - 10}px`,
+              duration: 0.4,
+              ease: "power2.out"
+            });
+
             tooltipRef.current.textContent = node.title.toUpperCase();
-            
-            // Set background color based on node type
-            switch (node.type) {
-              case 'article':
-                tooltipRef.current.style.backgroundColor = '#0057FF';
-                break;
-              case 'youtube_video':
-                tooltipRef.current.style.backgroundColor = '#FD00FD';
-                break;
-              case 'special_project':
-                tooltipRef.current.style.backgroundColor = '#FF4B00';
-                break;
-              default:
-                tooltipRef.current.style.backgroundColor = '#999';
-            }
+            tooltipRef.current.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+            tooltipRef.current.style.backdropFilter = 'blur(8px)';
+            tooltipRef.current.style.webkitBackdropFilter = 'blur(8px)';
             tooltipRef.current.style.color = '#FFFFFF';
             tooltipRef.current.style.padding = '2px 6px';
             tooltipRef.current.style.borderRadius = '4px';
-            tooltipRef.current.style.fontSize = '14px';
+            tooltipRef.current.style.fontSize = '12px';
             tooltipRef.current.style.fontWeight = '500';
             tooltipRef.current.style.whiteSpace = 'nowrap';
             tooltipRef.current.style.zIndex = '1000';
-            tooltipRef.current.style.transition = 'all 0.2s ease';
+
+            // Scale effect for node
+            if (node.__threeObj) {
+              gsap.to(node.__threeObj.scale, {
+                x: 28,
+                y: 28 * (9/16),
+                duration: 0.3,
+                ease: "back.out(1.7)"
+              });
+            }
           } else {
             tooltipRef.current.style.display = 'none';
+            
+            // Reset scale of previous node if exists
+            const nodes = Graph.graphData().nodes;
+            nodes.forEach((n: any) => {
+              if (n.__threeObj) {
+                gsap.to(n.__threeObj.scale, {
+                  x: 24,
+                  y: 24 * (9/16),
+                  duration: 0.3
+                });
+              }
+            });
           }
         }
       });
@@ -479,45 +545,15 @@ const NetworkGraph = ({ baseUrl }: NetworkGraphProps) => {
     // Save graph reference
     graphRef.current = Graph;
 
-    // Add reset button handler
-    const resetButton = document.querySelector('[data-w-reset]');
-    if (resetButton) {
-      resetButton.addEventListener('click', () => {
-        // Закрываем попап если он открыт
-        const popup = document.querySelector('[data-w-popup]');
-        if (popup && getComputedStyle(popup).display !== 'none') {
-          gsap.to(popup, {
-            y: '100%',
-            duration: 0.4,
-            ease: 'power3.inOut',
-            onComplete: () => {
-              popup.style.display = 'none';
-              setSelectedNode(null);
-            }
-          });
-        }
-
-        // Останавливаем вращение и возвращаем камеру в начальное положение
-        stopRotation();
-        Graph.cameraPosition(
-          { x: 0, y: 0, z: 200 }, 
-          { x: 0, y: 0, z: 0 }, 
-          1000
-        ).onComplete(() => {
-          startRotation();
-        });
-      });
-    }
-
-    // Start rotation after initialization
-    startRotation();
-
     // Handle window resize
     const handleResize = () => {
       Graph.width(containerRef.current?.clientWidth ?? window.innerWidth);
       Graph.height(containerRef.current?.clientHeight ?? window.innerHeight);
     };
     window.addEventListener('resize', handleResize);
+
+    // Start rotation after initialization
+    startRotation();
 
     // Cleanup
     return () => {
