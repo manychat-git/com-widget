@@ -43,7 +43,8 @@ export default defineConfig(({ mode }) => ({
           }
           return 'assets/[name]-[hash][extname]';
         },
-        inlineDynamicImports: true
+        inlineDynamicImports: true,
+        manualChunks: undefined
       }
     },
     commonjsOptions: {
