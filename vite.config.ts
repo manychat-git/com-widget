@@ -82,7 +82,9 @@ export default defineConfig(({ mode }) => ({
       '@headlessui/react',
       '@radix-ui/react-slider',
       '@radix-ui/react-switch',
-      '@radix-ui/react-separator'
+      '@radix-ui/react-separator',
+      'gsap',
+      'gsap/Draggable'
     ],
     esbuildOptions: {
       target: 'es2020'
