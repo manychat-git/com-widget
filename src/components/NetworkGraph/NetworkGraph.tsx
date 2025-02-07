@@ -27,17 +27,27 @@ const NetworkGraph = ({ baseUrl }: NetworkGraphProps) => {
   const startRotation = () => {
     if (rotationIntervalRef.current) return;
 
-    let angle = 0;
+    const controls = graphRef.current.controls();
+    const target = controls.target; // Текущая точка фокуса
+    const camera = graphRef.current.camera();
+    const distance = Math.sqrt(
+      Math.pow(camera.position.x - target.x, 2) +
+      Math.pow(camera.position.z - target.z, 2)
+    );
+
+    let angle = Math.atan2(
+      camera.position.z - target.z,
+      camera.position.x - target.x
+    );
+
     rotationIntervalRef.current = setInterval(() => {
       if (graphRef.current) {
-        const currentPos = graphRef.current.camera().position;
-        const distance = Math.sqrt(currentPos.x ** 2 + currentPos.z ** 2);
-        graphRef.current.cameraPosition({
-          x: distance * Math.sin(angle),
-          y: currentPos.y,
-          z: distance * Math.cos(angle)
-        });
         angle += 0.0005; // Очень медленное вращение
+        graphRef.current.cameraPosition({
+          x: target.x + distance * Math.cos(angle),
+          y: camera.position.y,
+          z: target.z + distance * Math.sin(angle)
+        });
       }
     }, 10);
   };
@@ -273,7 +283,16 @@ const NetworkGraph = ({ baseUrl }: NetworkGraphProps) => {
       .onNodeClick((node: any) => {
         setSelectedNode(node);
         stopRotation(); // Останавливаем вращение
-        
+
+        // Aim at node from outside
+        const distance = 40;
+        const distRatio = 1 + distance/Math.hypot(node.x, node.y, node.z);
+        graphRef.current.cameraPosition(
+          { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio },
+          node,
+          3000
+        );
+
         // Find popup elements
         const popup = document.querySelector('[data-w-popup]');
         const handle = document.querySelector('[data-w-handle]');
@@ -392,7 +411,7 @@ const NetworkGraph = ({ baseUrl }: NetworkGraphProps) => {
                     onComplete: () => {
                       popup.style.display = 'none';
                       setSelectedNode(null);
-                      startRotation(); // Возобновляем вращение после закрытия
+                      // Удаляем всю логику с камерой при закрытии попапа
                     }
                   });
                 } else {
@@ -407,19 +426,6 @@ const NetworkGraph = ({ baseUrl }: NetworkGraphProps) => {
             });
           }
         }
-
-        // Aim at node from outside
-        const distance = 40;
-        const distRatio = 1 + distance/Math.hypot(node.x, node.y, node.z);
-        graphRef.current.cameraPosition(
-          { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio },
-          node,
-          3000
-        ).onComplete(() => {
-          if (!selectedNode) {
-            startRotation(); // Возобновляем вращение только если нет выбранного узла
-          }
-        });
       })
       .onNodeHover((node: any) => {
         if (tooltipRef.current) {
@@ -477,15 +483,28 @@ const NetworkGraph = ({ baseUrl }: NetworkGraphProps) => {
     const resetButton = document.querySelector('[data-w-reset]');
     if (resetButton) {
       resetButton.addEventListener('click', () => {
+        // Закрываем попап если он открыт
+        const popup = document.querySelector('[data-w-popup]');
+        if (popup && getComputedStyle(popup).display !== 'none') {
+          gsap.to(popup, {
+            y: '100%',
+            duration: 0.4,
+            ease: 'power3.inOut',
+            onComplete: () => {
+              popup.style.display = 'none';
+              setSelectedNode(null);
+            }
+          });
+        }
+
+        // Останавливаем вращение и возвращаем камеру в начальное положение
         stopRotation();
         Graph.cameraPosition(
           { x: 0, y: 0, z: 200 }, 
           { x: 0, y: 0, z: 0 }, 
           1000
         ).onComplete(() => {
-          if (!selectedNode) {
-            startRotation();
-          }
+          startRotation();
         });
       });
     }
