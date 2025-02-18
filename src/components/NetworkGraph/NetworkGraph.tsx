@@ -179,7 +179,7 @@ const NetworkGraph = ({ baseUrl }: NetworkGraphProps) => {
             case 'type-link': return linkTypes.TYPE.STRENGTH;
             case 'author-link': return linkTypes.AUTHOR.STRENGTH;
             case 'issue-link': return linkTypes.ISSUE.STRENGTH;
-            default: return 0.6;
+            default: return 0.5;
           }
         })
       )
@@ -187,98 +187,61 @@ const NetworkGraph = ({ baseUrl }: NetworkGraphProps) => {
       .linkColor(() => settings.visual.color)
       .linkWidth(() => settings.visual.width)
       .linkOpacity(settings.visual.opacity)
-      // Отталкивание узлов
+      // Отталкивание узлов (возвращаем исходные значения)
       .d3Force('charge', d3.forceManyBody()
         .strength(settings.physics.repulsion.strength)
         .distanceMax(settings.physics.repulsion.maxDistance)
       )
-      // Сила коллизий
+      // Сила коллизий (возвращаем исходные значения)
       .d3Force('collision', d3.forceCollide()
         .radius(settings.physics.collision.radius)
         .strength(settings.physics.collision.strength)
       )
-      // Центральная сила (гравитация к центру)
-      .d3Force('center', settings.physics.centerForce ? d3.forceCenter() : null)
+      // Центростремительная сила (возвращаем исходное значение)
+      .d3Force('center', d3.forceCenter()
+        .strength(1)
+      )
       // Визуальные параметры
-      .nodeRelSize(6) // Базовый размер узлов
+      .nodeRelSize(6)
       .nodeThreeObject((node: any) => {
-        // Create a canvas for preprocessing
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        const img = new Image();
+        // Создаем геометрию сферы для всех узлов
+        const sphereGeometry = new THREE.SphereGeometry(12, 32, 32);
         
-        // Set canvas size for high quality
-        canvas.width = 1024;
-        canvas.height = Math.round(1024 * (9/16));
-        
-        // Calculate corner radius (3% of width)
-        const cornerRadiusPercent = 0.1;
-        const cornerRadius = Math.round(canvas.width * cornerRadiusPercent);
-        
-        // Create texture from canvas
-        const texture = new THREE.CanvasTexture(canvas);
-        texture.minFilter = THREE.LinearMipmapLinearFilter;
-        texture.magFilter = THREE.LinearFilter;
-        texture.anisotropy = 16;
-        texture.colorSpace = THREE.SRGBColorSpace;
-        texture.generateMipmaps = true;
-        
-        // Create material with the texture
-        const material = new THREE.SpriteMaterial({
-          map: texture,
+        // Создаем материал
+        const material = new THREE.MeshStandardMaterial({
+          metalness: 0.0,
+          roughness: 0.5,
           transparent: true,
-          depthWrite: true,
-          sizeAttenuation: true
+          opacity: 1
         });
-        
-        // Create sprite with initial size
-        const sprite = new THREE.Sprite(material);
-        const width = 24;
-        const height = width * (9/16);
-        sprite.scale.set(width, height, 1);
-        
-        // Load and process image
-        img.crossOrigin = "anonymous";
-        img.onload = () => {
-          if (ctx) {
-            // Clear canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Enable high-quality smoothing
-            ctx.imageSmoothingEnabled = true;
-            ctx.imageSmoothingQuality = 'high';
-            
-            // Draw rounded rectangle
-            ctx.beginPath();
-            ctx.roundRect(0, 0, canvas.width, canvas.height, cornerRadius);
-            ctx.clip();
-            
-            // Draw image
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            
-            // Update texture
-            texture.needsUpdate = true;
-          }
-        };
-        img.onerror = () => {
-          console.warn(`Failed to load node image: ${node.imageUrl}`);
-          if (ctx) {
-            // Draw fallback colored rectangle
-            ctx.fillStyle = (() => {
+
+        // Создаем меш
+        const sphere = new THREE.Mesh(sphereGeometry, material);
+
+        // Загружаем изображение как текстуру
+        const texture = new THREE.TextureLoader();
+        texture.load(
+          node.imageUrl,
+          (loadedTexture) => {
+            loadedTexture.colorSpace = THREE.SRGBColorSpace;
+            material.map = loadedTexture;
+            material.needsUpdate = true;
+          },
+          undefined,
+          (err) => {
+            console.error('Error loading texture:', err);
+            material.color = new THREE.Color((() => {
               switch (node.type) {
                 case 'article': return '#0057FF';
                 case 'youtube_video': return '#FD00FD';
                 case 'special_project': return '#FF4B00';
                 default: return '#999';
               }
-            })();
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            texture.needsUpdate = true;
+            })());
           }
-        };
-        img.src = node.imageUrl;
-        
-        return sprite;
+        );
+
+        return sphere;
       })
       .onNodeClick((node: any) => {
         setSelectedNode(node);
@@ -503,19 +466,20 @@ const NetworkGraph = ({ baseUrl }: NetworkGraphProps) => {
             tooltipRef.current.style.whiteSpace = 'nowrap';
             tooltipRef.current.style.zIndex = '1000';
 
-            // Scale effect for node
+            /* Закомментированный код увеличения при ховере
             if (node.__threeObj) {
               gsap.to(node.__threeObj.scale, {
-                x: 28,
-                y: 28 * (9/16),
+                x: 26,
+                y: 26 * (9/16),
                 duration: 0.3,
                 ease: "back.out(1.7)"
               });
             }
+            */
           } else {
             tooltipRef.current.style.display = 'none';
             
-            // Reset scale of previous node if exists
+            /* Закомментированный код сброса размера
             const nodes = Graph.graphData().nodes;
             nodes.forEach((n: any) => {
               if (n.__threeObj) {
@@ -526,6 +490,7 @@ const NetworkGraph = ({ baseUrl }: NetworkGraphProps) => {
                 });
               }
             });
+            */
           }
         }
       });
