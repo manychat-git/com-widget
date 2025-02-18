@@ -205,14 +205,14 @@ const NetworkGraph = ({ baseUrl }: NetworkGraphProps) => {
       .nodeRelSize(6)
       .nodeThreeObject((node: any) => {
         // Создаем геометрию сферы для всех узлов
-        const sphereGeometry = new THREE.SphereGeometry(12, 32, 32);
+        const sphereGeometry = new THREE.SphereGeometry(12, 64, 64);
         
         // Создаем материал
-        const material = new THREE.MeshStandardMaterial({
+        const material = new THREE.MeshPhysicalMaterial({
           metalness: 0.0,
-          roughness: 0.5,
-          transparent: true,
-          opacity: 1
+          roughness: 0.2,  // меньшее значение = более гладкая поверхность
+          clearcoat: 1.0,  // добавляет глянцевый слой
+          clearcoatRoughness: 0.1
         });
 
         // Создаем меш
