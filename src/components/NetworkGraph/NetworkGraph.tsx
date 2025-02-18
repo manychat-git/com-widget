@@ -152,7 +152,7 @@ const NetworkGraph = ({ baseUrl }: NetworkGraphProps) => {
     // Initialize the 3D force graph
     const Graph = ForceGraph3D()(containerRef.current)
       .backgroundColor('rgba(0,0,0,0)')
-      .graphData(newData)
+      .graphData({ nodes: newData.nodes, links: generateLinks(newData.nodes, settings) })
       .nodeLabel(null)
       .cameraPosition({ x: 0, y: 0, z: 200 })
       .nodeColor((node: any) => {
@@ -538,9 +538,14 @@ const NetworkGraph = ({ baseUrl }: NetworkGraphProps) => {
     renderer.alpha = true;
     
     // Add camera controls
-    Graph.controls().enableDamping = true;
-    Graph.controls().dampingFactor = 0.1;
-    Graph.controls().rotateSpeed = 0.8;
+    const controls = Graph.controls();
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.1;
+    controls.rotateSpeed = 0.8;
+    controls.zoomSpeed = 1.2;
+    
+    // Stop rotation on any user interaction
+    controls.addEventListener('start', stopRotation);
 
     // Save graph reference
     graphRef.current = Graph;
@@ -552,8 +557,8 @@ const NetworkGraph = ({ baseUrl }: NetworkGraphProps) => {
     };
     window.addEventListener('resize', handleResize);
 
-    // Start rotation after initialization
-    startRotation();
+    // Start rotation after a short delay
+    setTimeout(startRotation, 1000);
 
     // Cleanup
     return () => {

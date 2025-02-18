@@ -43,8 +43,7 @@ export default defineConfig(({ mode }) => ({
           }
           return 'assets/[name]-[hash][extname]';
         },
-        inlineDynamicImports: true,
-        manualChunks: undefined
+        inlineDynamicImports: true
       }
     },
     commonjsOptions: {
@@ -83,9 +82,7 @@ export default defineConfig(({ mode }) => ({
       '@headlessui/react',
       '@radix-ui/react-slider',
       '@radix-ui/react-switch',
-      '@radix-ui/react-separator',
-      'gsap',
-      'gsap/Draggable'
+      '@radix-ui/react-separator'
     ],
     esbuildOptions: {
       target: 'es2020'
