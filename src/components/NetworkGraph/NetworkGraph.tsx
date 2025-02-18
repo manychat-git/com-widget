@@ -209,10 +209,12 @@ const NetworkGraph = ({ baseUrl }: NetworkGraphProps) => {
         
         // Создаем материал
         const material = new THREE.MeshPhysicalMaterial({
-          metalness: 0.0,
-          roughness: 0.2,  // меньшее значение = более гладкая поверхность
-          clearcoat: 1.0,  // добавляет глянцевый слой
-          clearcoatRoughness: 0.1
+          metalness: 0.0,          // Убираем металлический эффект
+          roughness: 0.2,          // Делаем поверхность более гладкой
+          clearcoat: 1.0,          // Добавляем глянцевый слой
+          clearcoatRoughness: 0.1, // Делаем глянцевый слой более четким
+          transparent: true,       // Включаем прозрачность
+          opacity: 1              // Начальная непрозрачность
         });
 
         // Создаем меш
@@ -224,6 +226,17 @@ const NetworkGraph = ({ baseUrl }: NetworkGraphProps) => {
           node.imageUrl,
           (loadedTexture) => {
             loadedTexture.colorSpace = THREE.SRGBColorSpace;
+            loadedTexture.wrapS = THREE.RepeatWrapping;
+            loadedTexture.wrapT = THREE.RepeatWrapping;
+            loadedTexture.repeat.set(2, 1); // Увеличиваем повторение текстуры для лучшего качества
+            loadedTexture.generateMipmaps = true;
+            
+            // Получаем renderer из Graph для установки анизотропной фильтрации
+            const renderer = Graph.renderer();
+            if (renderer) {
+              loadedTexture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+            }
+            
             material.map = loadedTexture;
             material.needsUpdate = true;
           },
@@ -444,8 +457,20 @@ const NetworkGraph = ({ baseUrl }: NetworkGraphProps) => {
         if (tooltipRef.current) {
           if (node) {
             const screenPos = Graph.graph2ScreenCoords(node.x, node.y, node.z);
-            tooltipRef.current.style.display = 'block';
+            
+            // Анимация ноды при ховере
+            if (node.__threeObj) {
+              gsap.to(node.__threeObj.scale, {
+                x: 1.15,
+                y: 1.15,
+                z: 1.15,
+                duration: 0.6,
+                ease: "elastic.out(1, 0.3)" // Более мягкая эластичная анимация
+              });
+            }
 
+            tooltipRef.current.style.display = 'block';
+            
             // Magnetic tooltip animation
             gsap.to(tooltipRef.current, {
               left: `${screenPos.x}px`,
@@ -465,32 +490,22 @@ const NetworkGraph = ({ baseUrl }: NetworkGraphProps) => {
             tooltipRef.current.style.fontWeight = '500';
             tooltipRef.current.style.whiteSpace = 'nowrap';
             tooltipRef.current.style.zIndex = '1000';
-
-            /* Закомментированный код увеличения при ховере
-            if (node.__threeObj) {
-              gsap.to(node.__threeObj.scale, {
-                x: 26,
-                y: 26 * (9/16),
-                duration: 0.3,
-                ease: "back.out(1.7)"
-              });
-            }
-            */
           } else {
-            tooltipRef.current.style.display = 'none';
-            
-            /* Закомментированный код сброса размера
+            // Возврат всех нод к исходному состоянию
             const nodes = Graph.graphData().nodes;
             nodes.forEach((n: any) => {
               if (n.__threeObj) {
                 gsap.to(n.__threeObj.scale, {
-                  x: 24,
-                  y: 24 * (9/16),
-                  duration: 0.3
+                  x: 1,
+                  y: 1,
+                  z: 1,
+                  duration: 0.4,
+                  ease: "power2.out" // Более плавное возвращение
                 });
               }
             });
-            */
+
+            tooltipRef.current.style.display = 'none';
           }
         }
       });
